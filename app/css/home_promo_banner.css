@@ -1,0 +1,189 @@
+.promo {
+    --sand: #f6efde;
+    --gold: #c99a3e;
+    --deep: #0e3d3b;
+    --ink: #092826;
+
+    width: 100%;
+    padding: 40px 18px;
+    display: flex;
+    justify-content: center;
+    font-family: var(--font-work-sans);
+}
+
+.promo .banner {
+    position: relative;
+    width: 100%;
+    max-width: 80rem;
+    min-height: 380px;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    box-shadow:
+        0 30px 60px -20px rgba(9, 40, 38, 0.55),
+        0 2px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.promo .banner-img {
+    object-fit: cover;
+    z-index: 0;
+}
+
+.promo .banner-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(0deg, rgba(9, 40, 38, 0.92) 0%, rgba(9, 40, 38, 0.55) 45%, rgba(9, 40, 38, 0.15) 75%),
+        linear-gradient(90deg, rgba(9, 40, 38, 0.35) 0%, rgba(9, 40, 38, 0) 55%);
+}
+
+.promo .banner-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 40px 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--sand);
+}
+
+.discount {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    padding: 10px 16px;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50px;
+}
+
+.discount-percent {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    background: #f4b942;
+    color: #1b1b1b;
+    padding: 8px 14px;
+    border-radius: 30px;
+}
+
+.discount-text {
+    font-family: var(--font-work);
+    font-size: 14px;
+    color: white;
+}
+
+.price-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    opacity: 0.7;
+    font-size: 18px;
+}
+
+.promo .eyebrow {
+    font-family: var(--font-jetbrains-mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.promo .banner-content h2 {
+    font-family: var(--font-fraunces);
+    font-weight: 600;
+    font-size: clamp(30px, 4.5vw, 48px);
+    line-height: 1.08;
+    margin: 0;
+    color: var(--sand);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.promo .banner-content h2 em {
+    font-style: italic;
+    color: var(--gold);
+}
+
+.promo .banner-content p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(246, 239, 222, 0.88);
+    max-width: 38ch;
+}
+
+.promo .banner-footer {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.promo .price {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.promo .price-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(246, 239, 222, 0.7);
+}
+
+.promo .price-value {
+    font-family: var(--font-fraunces);
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--sand);
+    line-height: 1;
+}
+
+.promo .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 22px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.promo .cta:hover {
+    background: #e0b452;
+    transform: translateY(-1px);
+}
+
+.promo .cta svg {
+    width: 16px;
+    height: 16px;
+}
+
+@media (max-width: 640px) {
+    .promo .banner {
+        min-height: 320px;
+    }
+
+    .promo .banner-content {
+        padding: 28px 24px;
+    }
+
+    .promo .banner-footer {
+        gap: 18px;
+    }
+}

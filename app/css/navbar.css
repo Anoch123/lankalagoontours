@@ -1,0 +1,267 @@
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    border-bottom: 1px solid rgba(255, 255, 255, .25);
+    z-index: 40;
+    color: white;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    height: 30px;
+    width: auto;
+}
+
+.desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 45px;
+}
+
+.desktop-nav a {
+    position: relative;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.desktop-nav a.active {
+    color: #e28000;
+}
+
+.desktop-nav a.active::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #c9862f;
+    margin-top: 4px;
+}
+
+.mobile-nav {
+    display: none;
+}
+
+.booktour {
+    background: #c9862f;
+    border: 0;
+    padding: 15px 28px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: white;
+}
+
+.close-btn {
+    display: none;
+}
+
+/*mobile devices*/
+@media(max-width:900px) {
+
+    .navbar {
+        height: 70px;
+        padding: 0 25px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .logo img {
+        height: 20px;
+    }
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .mobile-nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 250px;
+        background: black;
+        display: flex;
+        flex-direction: column;
+        padding: 80px 30px 30px;
+        gap: 25px;
+        transform: translateX(100%);
+        transition: .3s;
+        z-index: 70;
+    }
+
+    .mobile-nav.open {
+        transform: translateX(0);
+    }
+
+    .mobile-nav a {
+        position: relative;
+        color: white;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .mobile-nav a.active {
+        color: #c9862f;
+    }
+
+    .mobile-nav a.active::after {
+        display: none;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .close-btn {
+        display: block;
+    }
+
+    .mobile-nav .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 60;
+    }
+}
+
+/*ipad and all other tablets*/
+@media(max-width:1204px) {
+
+    .navbar {
+        height: 70px;
+        padding: 0 25px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .logo img {
+        height: 20px;
+    }
+
+    .desktop-nav {
+        display: none;
+    }
+
+    .app-shell {
+        position: relative;
+        isolation: isolate;
+        overflow-x: hidden;
+    }
+
+    .app-shell::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        background:
+            radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.1) 0, rgba(239, 68, 68, 0.1) 180px, transparent 320px),
+            radial-gradient(circle at 10% 10%, rgba(251, 191, 36, 0.1) 0, rgba(251, 191, 36, 0.1) 220px, transparent 360px),
+            radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.1) 0, rgba(244, 63, 94, 0.1) 220px, transparent 360px);
+        filter: blur(60px);
+    }
+
+    .mobile-nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 300px;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        padding: 80px 30px 30px;
+        gap: 45px;
+        transform: translateX(100%);
+        transition: .3s;
+        z-index: 70;
+    }
+
+    .textcolor {
+        color: black;
+    }
+
+    .mobile-nav.open {
+        transform: translateX(0);
+    }
+
+    .mobile-nav a {
+        position: relative;
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .mobile-nav a.active {
+        color: #c9862f;
+    }
+
+    .mobile-nav a.active::after {
+        display: none;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .close-btn {
+        display: block;
+    }
+
+    .mobile-nav .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        color: black;
+        cursor: pointer;
+    }
+
+    .nav-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 60;
+    }
+}

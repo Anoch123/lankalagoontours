@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #000000;
   }
 }
 
@@ -23,4 +23,23 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.app-shell {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+}
+
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.1) 0, rgba(239, 68, 68, 0.1) 180px, transparent 320px),
+    radial-gradient(circle at 10% 10%, rgba(251, 191, 36, 0.1) 0, rgba(251, 191, 36, 0.1) 220px, transparent 360px),
+    radial-gradient(circle at 90% 90%, rgba(244, 63, 94, 0.1) 0, rgba(244, 63, 94, 0.1) 220px, transparent 360px);
+  filter: blur(60px);
 }
