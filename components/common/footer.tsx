@@ -178,6 +178,19 @@ export default function Footer() {
           >
             © {new Date().getFullYear()} · DEVELOPED BY 9X SOLUTIONS.
           </a>
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {["Website Ownership"].map(
+              (item) => (
+                <a
+                  key={item}
+                  href={"/lankalagoon-admin/ownership"}
+                  className="font-body text-[13px] text-[#6b6b70] transition-colors hover:text-[#f5f4f1]"
+                >
+                  {item}
+                </a>
+              )
+            )}
+          </nav>
         </div>
       </div>
     </footer>

@@ -5,7 +5,7 @@ import { Oswald } from "next/font/google";
 import PageHero from "@/components/ui/pageHero";
 import Footer from "@/components/common/footer";
 import { packages } from "@/lib/constants/tour_packages";
-import { Package } from "@/lib/types/tour_packages";
+import { Package } from "@/lib/types/api/tour_packages";
 import { TIME_SLOTS } from "@/lib/constants/tour_booking_bar";
 import { useSearchParams } from "next/navigation";
 

@@ -8,7 +8,7 @@ import { type OpenPanel } from "@/lib/types/tour_booking_bar";
 import { startOfDay, getMonthGrid } from "@/lib/utils/date";
 
 import "../../app/css/tour_booking_bar.css";
-import { Package } from "@/lib/types/tour_packages";
+import { Package } from "@/lib/types/api/tour_packages";
 import { packages } from "@/lib/constants/tour_packages";
 import AlertDialog from "./alertDialog";
 

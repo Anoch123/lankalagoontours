@@ -87,7 +87,7 @@ export default function TourPackages() {
                     </p>
                   </div>
                   <a
-                    href={`/tours/${pkg.id}`}
+                    href={`/boat-tours/${pkg.id}`}
                     className="lg-body inline-flex items-center gap-1.5 text-sm font-semibold text-[#0E4A45] group/link"
                   >
                     View itinerary
