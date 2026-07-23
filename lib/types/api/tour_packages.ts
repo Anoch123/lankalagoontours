@@ -19,7 +19,7 @@ export interface Package {
 
     duration:string;
 
-    price:number|string;
+    price:number;
 
     image:string;
 
@@ -29,9 +29,9 @@ export interface Package {
 
     departures:string;
 
-    groupMin:number|string;
+    groupMin:number;
 
-    groupMax:number|string;
+    groupMax:number;
 
     ageLevel:string;
 
