@@ -64,3 +64,24 @@ export const GALLERY = [
   "/images/church.webp",
   "/images/hero1.webp",
 ];
+
+export const REVIEWS = [
+  {
+    quote:
+      "Our guide knew every bird call and every family who lived along the water. Felt nothing like a tourist trap.",
+    name: "Hannah W.",
+    trip: "Sunset Mangrove Tour",
+  },
+  {
+    quote:
+      "Booked same-day and the captain still gave us the full story of the lagoon, not just a boat ride.",
+    name: "Dinesh R.",
+    trip: "Fishing Village Tour",
+  },
+  {
+    quote:
+      "You can tell these are local people, not a franchise. Loved that a part of it goes to mangrove replanting.",
+    name: "Marta G.",
+    trip: "Full-Day Lagoon Explorer",
+  },
+];

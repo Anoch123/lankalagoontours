@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "../../app/css/navbar.css";
@@ -18,6 +18,21 @@ export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [bookOpen, setBookOpen] = useState(false);
     const pathname = usePathname();
+
+    useEffect(() => {
+        if (typeof document === "undefined") return;
+
+        const originalBodyOverflow = document.body.style.overflow;
+        const originalHtmlOverflow = document.documentElement.style.overflow;
+
+        document.body.style.overflow = mobileOpen ? "hidden" : originalBodyOverflow;
+        document.documentElement.style.overflow = mobileOpen ? "hidden" : originalHtmlOverflow;
+
+        return () => {
+            document.body.style.overflow = originalBodyOverflow;
+            document.documentElement.style.overflow = originalHtmlOverflow;
+        };
+    }, [mobileOpen]);
 
     const navItems = MENU.map(({ label, href }) => {
         const isActive = pathname === href;
