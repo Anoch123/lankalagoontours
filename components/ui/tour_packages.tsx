@@ -80,10 +80,10 @@ export default function TourPackages() {
                 <div className="flex items-center justify-between border-t border-[#0E4A45]/10 pt-4">
                   <div className="lg-body">
                     <p className="text-[11px] text-[#12231F]/50 uppercase tracking-wide">
-                      {pkg.duration}
+                      {pkg.duration} Trip
                     </p>
                     <p className="text-[#0E4A45] font-semibold text-sm">
-                      {pkg.price}
+                      From {pkg.currency}{pkg.price}
                     </p>
                   </div>
                   <a

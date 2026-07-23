@@ -17,7 +17,7 @@ export default function Footer() {
             <span className="italic text-[#c99a3e]"> from the water?</span>
           </h3>
           <a
-            href="/tours"
+            href="/book_tour"
             className="inline-flex flex-shrink-0 items-center gap-2 rounded-full bg-[#c99a3e] px-7 py-3 text-[14px] font-semibold text-[#092826] transition-colors hover:bg-[#e0b452]"
             style={{ fontFamily: "var(--font-work-sans)" }}
           >
@@ -44,7 +44,7 @@ export default function Footer() {
           {/* Brand block */}
           <div className="lg:w-[34%] lg:pr-12">
             <Image
-              src="/images/logo.png"
+              src="/images/web_logo.png"
               alt="Site logo"
               width={100}
               height={30}

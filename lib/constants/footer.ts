@@ -19,7 +19,8 @@ export const LINK_GROUPS: LinkGroup[] = [
     heading: "Quick Links",
     links: [
       { label: "Boat Tours", href: "/my-bookings" },
-      { label: "Gallery", href: "/contact-us" },
+      { label: "Terms & Conditions", href: "/terms_&_conditions" },
+      { label: "Gallery", href: "/gallery" },
       { label: "Contact Us", href: "/contact-us" },
     ],
   },

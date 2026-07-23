@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "../../app/css/navbar.css";
 import { Oswald } from "next/font/google";
 import { MENU } from "@/lib/constants/navbar";
 import { app_text_constants } from "@/lib/constants/text_const";
-import BookTestRideModal from "../models/bookTourModal";
 
 const oswald = Oswald({
     weight: "700",
@@ -16,7 +15,9 @@ const oswald = Oswald({
 
 export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [bookOpen, setBookOpen] = useState(false);
+    const [openDesktopMenu, setOpenDesktopMenu] = useState<string | null>(null);
+    const [openMobileMenu, setOpenMobileMenu] = useState<string | null>(null);
+    const closeMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -34,8 +35,61 @@ export default function Navbar() {
         };
     }, [mobileOpen]);
 
-    const navItems = MENU.map(({ label, href }) => {
-        const isActive = pathname === href;
+    useEffect(() => {
+        if (!mobileOpen) setOpenMobileMenu(null);
+    }, [mobileOpen]);
+
+    useEffect(() => {
+        return () => {
+            if (closeMenuTimeoutRef.current) {
+                clearTimeout(closeMenuTimeoutRef.current);
+            }
+        };
+    }, []);
+
+    const navItems = MENU.map(({ label, href, children }) => {
+        const isActive = pathname === href || children?.some((c) => c.href === pathname);
+
+        if (children?.length) {
+            const isOpen = openDesktopMenu === label;
+            return (
+                <div
+                    key={label}
+                    className={`nav-dropdown ${isOpen ? "open" : ""}`}
+                    onMouseEnter={() => {
+                        if (closeMenuTimeoutRef.current) {
+                            clearTimeout(closeMenuTimeoutRef.current);
+                            closeMenuTimeoutRef.current = null;
+                        }
+                        setOpenDesktopMenu(label);
+                    }}
+                    onMouseLeave={() => {
+                        closeMenuTimeoutRef.current = setTimeout(() => {
+                            setOpenDesktopMenu(null);
+                            closeMenuTimeoutRef.current = null;
+                        }, 120);
+                    }}
+                >
+                    <button
+                        type="button"
+                        className={`nav-dropdown-trigger ${isActive ? "active" : ""}`}
+                        onClick={() => setOpenDesktopMenu(isOpen ? null : label)}
+                        aria-expanded={isOpen}
+                    >
+                        <span className={`${oswald.className} textcolor text-[18px]`}>{label}</span>
+                    </button>
+
+                    <div className="nav-dropdown-menu">
+                        {children.map((child) => (
+                            <Link key={child.label} href={child.href} onClick={() => setOpenDesktopMenu(null)} className="uppercase">
+                                {child.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <Link
                 key={label}
@@ -44,6 +98,59 @@ export default function Navbar() {
                 className={isActive ? "active" : ""}
             >
                 <span className={`${oswald.className} textcolor text-[18px] hover:text-[#c9862f] duration-300`}>{label}</span>
+            </Link>
+        );
+    });
+
+    const mobileNavItems = MENU.map(({ label, href, children }, i) => {
+        const isActive = pathname === href || children?.some((c) => c.href === pathname);
+        const index = String(i + 1).padStart(2, "0");
+
+        if (children?.length) {
+            const isOpen = openMobileMenu === label;
+            return (
+                <div key={label} className={`mobile-nav-dropdown ${isOpen ? "open" : ""}`}>
+                    <button
+                        type="button"
+                        className="mobile-nav-dropdown-trigger"
+                        onClick={() => setOpenMobileMenu(isOpen ? null : label)}
+                        aria-expanded={isOpen}
+                    >
+                        <span style={{ display: "flex", alignItems: "baseline", gap: 0 }}>
+                            <span className="mobile-nav-index">{index}</span>
+                            <span className={`${oswald.className} text-[#0f2e2c]`}>{label}</span>
+                        </span>
+                        <span className="mobile-nav-dropdown-caret" />
+                    </button>
+
+                    <div className="mobile-nav-submenu ml-4">
+                        {children.map((child) => (
+                            <Link
+                                key={child.label}
+                                href={child.href}
+                                onClick={() => {
+                                    setMobileOpen(false);
+                                    setOpenMobileMenu(null);
+                                }}
+                                className="uppercase"
+                            >
+                                {child.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <Link
+                key={label}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                className={isActive ? "active" : ""}
+            >
+                <span className="mobile-nav-index">{index}</span>
+                <span className={`${oswald.className} textcolor`}>{label}</span>
             </Link>
         );
     });
@@ -58,30 +165,45 @@ export default function Navbar() {
 
             <nav className="desktop-nav">
                 {navItems}
-                <div onClick={() => setBookOpen(true)}>
-                    <button className="booktour">BOOK TOUR</button>
+                <div>
+                    <a className="booktour" href="/book_tour">BOOK TOUR</a>
                 </div>
             </nav>
 
             <button
                 className="hamburger"
                 onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Open menu"
             >
                 ☰
             </button>
 
             <nav className={`mobile-nav app-shell ${mobileOpen ? "open" : ""}`}>
-                <button className="close-btn" onClick={() => setMobileOpen(false)}>✕</button>
-                {navItems}
-                <Link href="/contact-us" onClick={() => setMobileOpen(false)}>
-                    <button className={`${oswald.className} text-[18px] hover:text-[#01e044] bg-[#f5610c] text-white p-2 rounded w-full`}>BOOK TOUR</button>
-                </Link>
+                <div className="mobile-nav-header">
+                    <Link href="/" onClick={() => setMobileOpen(false)}>
+                        <img src="/images/web_logo.png" alt={app_text_constants.APP_NAME} />
+                    </Link>
+                    <button className="close-btn" onClick={() => setMobileOpen(false)} aria-label="Close menu">✕</button>
+                </div>
+
+                <div className="mobile-nav-list">
+                    {mobileNavItems}
+                </div>
+
+                <div className="mobile-nav-footer">
+                    <p>Ready to explore the lagoon?</p>
+                    <a
+                        className={`${oswald.className} mobile-booktour`}
+                        href="/book_tour"
+                    >
+                        BOOK TOUR
+                    </a>
+                </div>
             </nav>
 
             {mobileOpen && (
                 <div className="nav-overlay" onClick={() => setMobileOpen(false)} />
             )}
-            <BookTestRideModal isOpen={bookOpen} onClose={() => setBookOpen(false)} />
         </header>
     );
 }

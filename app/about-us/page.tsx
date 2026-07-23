@@ -11,33 +11,30 @@ export default function AboutUs() {
       className={`${fraunces.variable} ${workSans.variable} ${jetbrainsMono.variable} bg-[#fbfaf6]`}
     >
       <PageHero
-        eyebrow="Our Story"
+        eyebrow="About Us"
         heading={[
-          "Story behind",
+          "Discover",
           <><span className="text-[#c9862f]">Lanka Lagoon</span></>,
         ]}
-        description="Boat tours through the Negombo lagoon, led by the families who've fished and guided these waters for generations."
+        description="We are passionate local guides dedicated to sharing the natural beauty, rich culture, and unique wildlife of Negombo Lagoon. Every tour is designed to create authentic experiences, unforgettable memories, and a deeper connection with one of Sri Lanka's most beautiful coastal destinations."
         imageSrc="/images/hero1.webp"
       />
 
-      <div className="relative z-10 mx-auto -mt-10 max-w-6xl px-6 sm:-mt-14 lg:px-8">
-        <div className="grid grid-cols-2 gap-4 rounded-2xl bg-[#0d2b28] p-4 shadow-xl shadow-[#0d2b28]/20 sm:grid-cols-4 sm:gap-0 sm:p-0">
+      <div className="border-b border-[#0f2e2c]/[0.08]">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-6 py-12 sm:grid-cols-4 lg:px-8">
           {STATS.map((stat, i) => (
-            <div key={stat.label} className="relative flex flex-col items-center justify-center px-4 py-6 text-center">
-              {i > 0 && (
-                <span
-                  className="absolute left-0 top-1/2 hidden h-12 -translate-y-1/2 border-l border-dashed border-[#f6f1e4]/20 sm:block"
-                  aria-hidden="true"
-                />
-              )}
+            <div
+              key={stat.label}
+              className={`text-center ${i > 0 ? "sm:border-l sm:border-[#0f2e2c]/10" : ""}`}
+            >
               <p
-                className="text-[26px] font-semibold text-[#e7c16f] sm:text-[32px]"
+                className="text-[30px] font-semibold text-[#c99a3e] sm:text-[36px]"
                 style={{ fontFamily: "var(--font-fraunces)" }}
               >
                 {stat.value}
               </p>
               <p
-                className="mt-1 text-[11px] uppercase tracking-[0.12em] text-[#f6f1e4]/60"
+                className="mt-1 text-[12px] uppercase tracking-[0.1em] text-[#0f2e2c]/55"
                 style={{ fontFamily: "var(--font-jetbrains-mono)" }}
               >
                 {stat.label}
@@ -493,8 +490,8 @@ export default function AboutUs() {
           </div>
 
           <div className="flex justify-center lg:justify-end">
-            <div className="rounded-full bg-gradient-to-br from-[#c99a3e] to-[#e7c16f] p-1 shadow-2xl">
-              <div className="relative h-38 w-38 overflow-hidden rounded-full bg-white sm:h-56 sm:w-56">
+            <div className="rounded-full">
+              <div className="relative overflow-hidden rounded-full sm:h-56 sm:w-56">
                 <Image
                   src="/images/sltda_logo.png"
                   alt="SLTDA Certificate"
@@ -506,7 +503,6 @@ export default function AboutUs() {
           </div>
         </div>
       </div>
-
       <Footer />
     </section>
   );

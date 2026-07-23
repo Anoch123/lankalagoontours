@@ -2,25 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { destinations } from "@/lib/constants/tour_booking_bar";
 import { DOW } from "@/lib/constants/tour_booking_bar";
 
-import { Destination, type OpenPanel } from "@/lib/types/tour_booking_bar";
+import { type OpenPanel } from "@/lib/types/tour_booking_bar";
 import { startOfDay, getMonthGrid } from "@/lib/utils/date";
 
 import "../../app/css/tour_booking_bar.css";
+import { Package } from "@/lib/types/tour_packages";
+import { packages } from "@/lib/constants/tour_packages";
+import AlertDialog from "./alertDialog";
 
 export default function TourBookingBar() {
   const [open, setOpen] = useState<OpenPanel>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [destination, setDestination] = useState<Destination | null>(null);
+  const [destination, setDestination] = useState<Package | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [viewMonth, setViewMonth] = useState<Date>(startOfDay(new Date()));
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
+  const [guests, setGuests] = useState(2);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -42,20 +44,29 @@ export default function TourBookingBar() {
     ? selectedDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : "Add dates";
 
-  const travelersLabel = `${adults + children} traveler${adults + children === 1 ? "" : "s"}`;
+  const travelersLabel = `${guests} guest${guests === 1 ? "" : "s"}`;
 
   function toggle(panel: OpenPanel) {
     setOpen((current) => (current === panel ? null : panel));
   }
 
   function handleSubmit() {
+    if (!destination || !selectedDate || !guests) {
+      setConfirmOpen(true);
+
+      return;
+    }
+
     const params = new URLSearchParams();
     if (destination) params.set("destination", destination.id);
     if (selectedDate) params.set("date", selectedDate.toISOString().slice(0, 10));
-    params.set("adults", String(adults));
-    params.set("children", String(children));
-    window.location.href = `/tours?${params.toString()}`;
+    params.set("guests", String(guests));
+    window.location.href = `/book_tour?${params.toString()}`;
   }
+
+  const handleCancelBooking = () => {
+    // cancel booking
+  };
 
   return (
     <div className="tour-booking" ref={containerRef}>
@@ -81,14 +92,24 @@ export default function TourBookingBar() {
             <span className="booking-field-copy">
               <span className="booking-field-label">Destination</span>
               <span className="booking-field-value" data-placeholder={!destination}>
-                {destination ? destination.name : "Where to?"}
+                {destination ? destination.title : "Where to?"}
               </span>
             </span>
           </button>
 
+          <AlertDialog
+            open={confirmOpen}
+            onOpenChange={setConfirmOpen}
+            variant="danger"
+            title="Ooops!"
+            description="Please Fill all the fields to book the tour."
+            confirmLabel="Ok"
+            onConfirm={handleCancelBooking}
+          />
+
           {open === "destination" && (
             <div className="booking-panel">
-              {destinations.map((d) => (
+              {packages.map((d) => (
                 <button
                   key={d.id}
                   type="button"
@@ -100,7 +121,7 @@ export default function TourBookingBar() {
                   }}
                 >
                   <span className="booking-option-dot" />
-                  {d.name}
+                  {d.title}
                 </button>
               ))}
             </div>
@@ -189,7 +210,7 @@ export default function TourBookingBar() {
           )}
         </div>
 
-        {/* ---------- travelers ---------- */}
+        {/* ---------- guests ---------- */}
         <div className="booking-field">
           <button
             type="button"
@@ -206,7 +227,7 @@ export default function TourBookingBar() {
               </svg>
             </span>
             <span className="booking-field-copy">
-              <span className="booking-field-label">Travelers</span>
+              <span className="booking-field-label">Guests</span>
               <span className="booking-field-value">{travelersLabel}</span>
             </span>
           </button>
@@ -215,50 +236,23 @@ export default function TourBookingBar() {
             <div className="booking-panel">
               <div className="booking-stepper-row">
                 <span className="booking-stepper-copy">
-                  <span className="booking-stepper-label">Adults</span>
-                  <span className="booking-stepper-hint">Age 13+</span>
+                  <span className="booking-stepper-label">Guests</span>
                 </span>
                 <div className="booking-stepper-controls">
                   <button
                     type="button"
                     className="booking-stepper-btn"
-                    disabled={adults <= 1}
-                    onClick={() => setAdults((n) => Math.max(1, n - 1))}
+                    disabled={guests <= 1}
+                    onClick={() => setGuests((n) => Math.max(1, n - 1))}
                   >
                     −
                   </button>
-                  <span className="booking-stepper-count">{adults}</span>
+                  <span className="booking-stepper-count">{guests}</span>
                   <button
                     type="button"
                     className="booking-stepper-btn"
-                    disabled={adults >= 12}
-                    onClick={() => setAdults((n) => Math.min(12, n + 1))}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <div className="booking-stepper-row">
-                <span className="booking-stepper-copy">
-                  <span className="booking-stepper-label">Children</span>
-                  <span className="booking-stepper-hint">Age 2–12</span>
-                </span>
-                <div className="booking-stepper-controls">
-                  <button
-                    type="button"
-                    className="booking-stepper-btn"
-                    disabled={children <= 0}
-                    onClick={() => setChildren((n) => Math.max(0, n - 1))}
-                  >
-                    −
-                  </button>
-                  <span className="booking-stepper-count">{children}</span>
-                  <button
-                    type="button"
-                    className="booking-stepper-btn"
-                    disabled={children >= 6}
-                    onClick={() => setChildren((n) => Math.min(6, n + 1))}
+                    disabled={guests >= 12}
+                    onClick={() => setGuests((n) => Math.min(12, n + 1))}
                   >
                     +
                   </button>
@@ -269,14 +263,9 @@ export default function TourBookingBar() {
         </div>
 
         <button type="button" className="booking-submit" onClick={handleSubmit}>
-          View Availability
+          Book Your Tour
         </button>
       </div>
-
-      {/* <div className="booking-trust">
-        <span className="booking-trust-dot" />
-        Free cancellation up to 48hrs before departure
-      </div> */}
     </div>
   );
 }
