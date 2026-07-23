@@ -178,7 +178,7 @@ export default function BoatTours() {
                                     >
                                         Guests
                                     </label>
-                                    <select
+                                    {/* <select
                                         id="tour-guests"
                                         className="mt-2 w-full appearance-none rounded-lg border border-[#0E3A3B]/15 bg-[#FAF7F1] px-4 py-3 text-sm text-[#23231F] outline-none focus-visible:ring-2 focus-visible:ring-[#B68A4E]"
                                     >
@@ -189,7 +189,7 @@ export default function BoatTours() {
                                                 </option>
                                             )
                                         )}
-                                    </select>
+                                    </select> */}
                                 </div>
                             </div>
 
