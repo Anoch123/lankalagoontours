@@ -4,33 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Oswald } from "next/font/google";
 import PageHero from "@/components/ui/pageHero";
 import Footer from "@/components/common/footer";
-import { packages } from "@/lib/constants/tour_packages";
 import { Package } from "@/lib/types/api/tour_packages";
-import { TIME_SLOTS } from "@/lib/constants/tour_booking_bar";
 import { useSearchParams } from "next/navigation";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
+import { Passenger } from "@/lib/types/tour_booking";
+import { emptyPassenger, formatTimeSlots, getMonthGrid, getNextMonth, isPastDay } from "@/lib/utils/bookTour";
 
 const oswald = Oswald({
     weight: ["500", "700"],
     subsets: ["latin"],
 });
 
-type Passenger = {
-    firstName: string;
-    lastName: string;
-    country: string;
-};
-
-const emptyPassenger = (): Passenger => ({ firstName: "", lastName: "", country: "" });
-
-function getMonthGrid(year: number, month: number) {
-    const firstDay = new Date(year, month, 1);
-    const startOffset = firstDay.getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const cells: (number | null)[] = Array(startOffset).fill(null);
-    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-    while (cells.length % 7 !== 0) cells.push(null);
-    return cells;
-}
 
 export default function BookTour() {
     const searchParams = useSearchParams();
@@ -45,21 +29,41 @@ export default function BookTour() {
     const [contact, setContact] = useState({ email: "", phone: "", remarks: "" });
     const [passengers, setPassengers] = useState<Passenger[]>([emptyPassenger(), emptyPassenger()]);
     const [confirmed, setConfirmed] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
 
-    const tour = packages.find((t) => t.id === selectedTour) ?? null;
+    const [tours, setTours] = useState<Package[]>([]);
+    const { listTour } = useBoatTours();
+
+    const tour = tours.find((t) => t.id === selectedTour) ?? null;
     const cells = useMemo(() => getMonthGrid(viewYear, viewMonth), [viewYear, viewMonth]);
     const monthLabel = new Date(viewYear, viewMonth).toLocaleString("en-US", { month: "long", year: "numeric" });
+    const timeSlots = useMemo(() => {return formatTimeSlots(tour?.departures);}, [tour]);
 
-    // keep passenger list length in sync with guest count, preserving existing entries
     useEffect(() => {
-        setPassengers((prev) => {
-            if (guests === prev.length) return prev;
-            if (guests > prev.length) {
-                return [...prev, ...Array.from({ length: guests - prev.length }, emptyPassenger)];
+
+        const loadBoatTours = async () => {
+            const response = await listTour();
+
+            if (response) {
+                setTours(response as Package[]);
             }
-            return prev.slice(0, guests);
+        }
+
+        loadBoatTours();
+
+    }, [listTour])
+
+    const updateGuestCount = (nextGuests: number) => {
+        setGuests(nextGuests);
+        setPassengers((prev) => {
+            if (nextGuests === prev.length) return prev;
+            if (nextGuests > prev.length) {
+                return [...prev, ...Array.from({ length: nextGuests - prev.length }, emptyPassenger)];
+            }
+            return prev.slice(0, nextGuests);
         });
-    }, [guests]);
+    };
 
     const updatePassenger = (index: number, field: keyof Passenger, value: string) => {
         setPassengers((prev) =>
@@ -67,29 +71,82 @@ export default function BookTour() {
         );
     };
 
-    const isPastDay = (day: number) => {
-        const d = new Date(viewYear, viewMonth, day);
-        const t = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        return d < t;
-    };
-
     const changeMonth = (dir: 1 | -1) => {
-        let m = viewMonth + dir;
-        let y = viewYear;
-        if (m < 0) { m = 11; y -= 1; }
-        if (m > 11) { m = 0; y += 1; }
-        setViewMonth(m);
-        setViewYear(y);
+        const nextMonth = getNextMonth(viewYear, viewMonth, dir);
+        setViewMonth(nextMonth.viewMonth);
+        setViewYear(nextMonth.viewYear);
         setSelectedDate(null);
     };
 
     const total = tour ? tour.price * guests : 0;
 
-    const handleConfirm = (e: React.FormEvent) => {
+    const formatDateForDb = (value: Date) => {
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, "0");
+        const day = String(value.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const buildPayload = () => {
+        const leadPassenger = passengers[0];
+        const bookingDate = new Date(viewYear, viewMonth, selectedDate!);
+
+        return {
+            tour_id: tour!.id,
+            booking_number: `LLT-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+            booking_date: formatDateForDb(bookingDate),
+            departure_time: selectedTime!,
+            guest_count: guests,
+            total_price: Number((tour!.price * guests).toFixed(2)),
+            lead_name: `${leadPassenger.firstName} ${leadPassenger.lastName}`.trim(),
+            email: contact.email,
+            phone: contact.phone,
+            remarks: contact.remarks || "",
+            status: "pending",
+            payment_status: "pending",
+        };
+    };
+
+    const handleConfirm = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!tour || !selectedDate || !selectedTime) return;
-        // wire up to your booking endpoint here — passengers[] carries fname/lname/country per guest
-        setConfirmed(true);
+
+        setIsSubmitting(true);
+        setSubmitError(null);
+
+        try {
+            const bookingPayload = buildPayload();
+            const passengerPayloads = passengers.map((passenger, index) => ({
+                first_name: passenger.firstName.trim(),
+                last_name: passenger.lastName.trim(),
+                country: passenger.country.trim(),
+                is_lead: index === 0,
+            }));
+
+            const response = await fetch("/api/bookings", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    booking: bookingPayload,
+                    passengers: passengerPayloads,
+                }),
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(result.error || "Unable to create your booking right now.");
+            }
+
+            setConfirmed(true);
+        } catch (error) {
+            console.error("Booking submission failed", error);
+            setSubmitError(error instanceof Error ? error.message : "Unable to create your booking right now. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     useEffect(() => {
@@ -105,14 +162,14 @@ export default function BookTour() {
             if (totalPassengers) {
                 const parsedGuests = Number(totalPassengers);
                 if (!Number.isNaN(parsedGuests)) {
-                    setGuests(parsedGuests);
+                    updateGuestCount(parsedGuests);
                 }
             }
 
             if (dateParam) {
                 const parsedDate = new Date(dateParam);
                 if (!Number.isNaN(parsedDate.getTime())) {
-                    setSelectedDate(parsedDate.getDate()+1);
+                    setSelectedDate(parsedDate.getDate() + 1);
                     setViewYear(parsedDate.getFullYear());
                     setViewMonth(parsedDate.getMonth());
                     setSelectedTime(null);
@@ -141,7 +198,7 @@ export default function BookTour() {
                         <p className="mt-2 text-sm text-[#0f2e2c]/60">
                             {monthLabel} {selectedDate} &middot; {selectedTime} &middot; {guests} guest{guests > 1 ? "s" : ""}
                         </p>
-                        <p className="mt-4 text-lg font-semibold text-[#0f2e2c]">Rs. {total.toLocaleString()}</p>
+                        <p className="mt-4 text-lg font-semibold text-[#0f2e2c]">Total Amount of Tour : {tour.currency}{total.toLocaleString()}</p>
                         <p className="mt-6 text-sm text-[#0f2e2c]/60">
                             A confirmation will be sent to {contact.email || "your email"}.
                         </p>
@@ -171,7 +228,7 @@ export default function BookTour() {
                             <h2 className={`${oswald.className} text-xl font-semibold text-[#0f2e2c]`}>Choose Your Route</h2>
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
-                            {packages.map((t) => {
+                            {tours.map((t) => {
                                 const isActive = selectedTour === t.id;
                                 return (
                                     <button
@@ -239,7 +296,7 @@ export default function BookTour() {
                                 ))}
                                 {cells.map((day, i) => {
                                     if (day === null) return <span key={i} />;
-                                    const disabled = isPastDay(day);
+                                    const disabled = isPastDay(day, viewYear, viewMonth, today);
                                     const isSelected = selectedDate === day;
                                     return (
                                         <button
@@ -263,7 +320,7 @@ export default function BookTour() {
 
                         {selectedDate && (
                             <div className="mt-4 flex flex-wrap gap-2">
-                                {TIME_SLOTS.map((slot) => {
+                                {timeSlots.map((slot) => {
                                     const isActive = selectedTime === slot;
                                     return (
                                         <button
@@ -297,7 +354,7 @@ export default function BookTour() {
                             <div className="flex items-center gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                                    onClick={() => updateGuestCount(Math.max(1, guests - 1))}
                                     className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0f2e2c]/15 text-[#0f2e2c] transition-colors hover:border-[#c9862f] hover:text-[#a86c1f]"
                                 >
                                     −
@@ -305,7 +362,7 @@ export default function BookTour() {
                                 <span className="w-4 text-center text-sm font-semibold text-[#0f2e2c]">{guests}</span>
                                 <button
                                     type="button"
-                                    onClick={() => setGuests((g) => Math.min(12, g + 1))}
+                                    onClick={() => updateGuestCount(Math.min(12, guests + 1))}
                                     className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0f2e2c]/15 text-[#0f2e2c] transition-colors hover:border-[#c9862f] hover:text-[#a86c1f]"
                                 >
                                     +
@@ -399,12 +456,16 @@ export default function BookTour() {
                             />
                         </label>
 
+                        {submitError ? (
+                            <p className="mt-4 text-sm text-red-600">{submitError}</p>
+                        ) : null}
+
                         <button
                             type="submit"
-                            disabled={!tour || !selectedDate || !selectedTime}
+                            disabled={!tour || !selectedDate || !selectedTime || isSubmitting}
                             className={`${oswald.className} mt-6 inline-flex items-center gap-2 rounded-full bg-[#c9862f] px-7 py-3 text-sm font-semibold text-[#0f2e2c] transition-transform hover:-translate-y-0.5 hover:bg-[#e7c16f] disabled:pointer-events-none disabled:opacity-40`}
                         >
-                            Confirm Booking
+                            {isSubmitting ? "Creating Booking..." : "Confirm Booking"}
                         </button>
                     </section>
                 </form>

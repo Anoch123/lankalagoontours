@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useRef, useState } from "react";
+
 const MENU = [
     { label: "HOME", href: "/" },
     { label: "ABOUT US", href: "/about-us" },

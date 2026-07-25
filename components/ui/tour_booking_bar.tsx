@@ -9,8 +9,8 @@ import { startOfDay, getMonthGrid } from "@/lib/utils/date";
 
 import "../../app/css/tour_booking_bar.css";
 import { Package } from "@/lib/types/api/tour_packages";
-import { packages } from "@/lib/constants/tour_packages";
 import AlertDialog from "./alertDialog";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
 
 export default function TourBookingBar() {
   const [open, setOpen] = useState<OpenPanel>(null);
@@ -23,6 +23,8 @@ export default function TourBookingBar() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const [guests, setGuests] = useState(2);
+  const [tours, setTours] = useState<Package[]>([]);
+  const { listTour, loading } = useBoatTours();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -30,6 +32,16 @@ export default function TourBookingBar() {
         setOpen(null);
       }
     }
+
+    const loadBoatTours = async () => {
+      const response = await listTour();
+
+      if (response) {
+        setTours(response as Package[]);
+      }
+    }
+
+    loadBoatTours();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -109,7 +121,7 @@ export default function TourBookingBar() {
 
           {open === "destination" && (
             <div className="booking-panel">
-              {packages.map((d) => (
+              {tours.map((d) => (
                 <button
                   key={d.id}
                   type="button"

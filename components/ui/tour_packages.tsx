@@ -24,6 +24,14 @@ export default function TourPackages() {
 
   }, [])
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <span className="text-[#0E4A45] text-lg font-medium">Loading...</span>
+      </div>
+    );
+  }
+
   return (
     <section className="py-14 sm:px-8 px-4">
       <div className="mx-auto max-w-7xl">

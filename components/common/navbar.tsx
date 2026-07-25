@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "../../app/css/navbar.css";
 import { Oswald } from "next/font/google";
 import { MENU } from "@/lib/constants/navbar";
 import { app_text_constants } from "@/lib/constants/text_const";
+import { Package } from "@/lib/types/api/tour_packages";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
 
 const oswald = Oswald({
     weight: "700",
@@ -18,6 +20,8 @@ export default function Navbar() {
     const [openDesktopMenu, setOpenDesktopMenu] = useState<string | null>(null);
     const [openMobileMenu, setOpenMobileMenu] = useState<string | null>(null);
     const closeMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [tours, setTours] = useState<Package[]>([]);
+    const { listTour } = useBoatTours();
     const pathname = usePathname();
 
     useEffect(() => {
@@ -36,6 +40,42 @@ export default function Navbar() {
     }, [mobileOpen]);
 
     useEffect(() => {
+
+        const loadBoatTours = async () => {
+            const response = await listTour();
+
+            if (response) {
+                setTours(response as Package[]);
+            }
+        }
+
+        loadBoatTours();
+
+    }, [])
+
+    const menuItems = useMemo(() => {
+
+        return MENU.map((item) => {
+
+            if (item.label === "BOAT TOURS") {
+
+                return {
+                    ...item,
+                    children: tours.map((tour) => ({
+                        label: tour.title,
+                        href: `/boat-tours/${tour.id}`,
+                    }))
+                };
+
+            }
+
+            return item;
+
+        });
+
+    }, [tours]);
+
+    useEffect(() => {
         if (!mobileOpen) setOpenMobileMenu(null);
     }, [mobileOpen]);
 
@@ -47,7 +87,7 @@ export default function Navbar() {
         };
     }, []);
 
-    const navItems = MENU.map(({ label, href, children }) => {
+    const navItems = menuItems.map(({ label, href, children }) => {
         const isActive = pathname === href || children?.some((c) => c.href === pathname);
 
         if (children?.length) {
@@ -102,7 +142,7 @@ export default function Navbar() {
         );
     });
 
-    const mobileNavItems = MENU.map(({ label, href, children }, i) => {
+    const mobileNavItems = menuItems.map(({ label, href, children }, i) => {
         const isActive = pathname === href || children?.some((c) => c.href === pathname);
         const index = String(i + 1).padStart(2, "0");
 
