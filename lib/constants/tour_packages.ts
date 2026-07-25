@@ -15,12 +15,12 @@ export const packages: Package[] = [
 
     type: "Shared motorboat tour",
     departures: "06:30 & 15:30 daily",
-    groupMin: 2,
-    groupMax: 12,
-    ageLevel: "All ages welcome",
+    group_min: 2,
+    group_max: 12,
+    age_level: "All ages welcome",
     fitness: "Low — mostly seated",
-    departureLocation: "Lanka Lagoon Jetty, Negombo",
-
+    departure_location: "Lanka Lagoon Jetty, Negombo",
+    status: "ACTIVE",
     summary:
       "Glide out from the fishing jetty at first light, thread the old Dutch canal, and drift into mangrove channels where the lagoon does most of the talking.",
 
@@ -85,11 +85,12 @@ export const packages: Package[] = [
 
     type: "Private sunset boat tour",
     departures: "16:30 daily",
-    groupMin: 2,
-    groupMax: 10,
-    ageLevel: "All ages welcome",
+    status: "INACTIVE",
+    group_min: 2,
+    group_max: 10,
+    age_level: "All ages welcome",
     fitness: "Very low",
-    departureLocation: "Lanka Lagoon Jetty, Negombo",
+    departure_location: "Lanka Lagoon Jetty, Negombo",
 
     summary:
       "A peaceful evening cruise across Negombo lagoon as the sun disappears behind coconut palms.",

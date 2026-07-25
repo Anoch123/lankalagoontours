@@ -2,50 +2,28 @@ export interface ItineraryStop {
     title:string;
     time:string;
     copy:string;
-}
-
-
+}   
 export interface Package {
-
     id:string;
-
     title:string;
-
     currency:string;
-
     tagline:string;
-
     description:string;
-
     duration:string;
-
     price:number;
-
     image:string;
-
     tag:string;
-
     type:string;
-
     departures:string;
-
-    groupMin:number;
-
-    groupMax:number;
-
-    ageLevel:string;
-
+    group_min:number;
+    group_max:number;
+    age_level:string;
     fitness:string;
-
-    departureLocation:string;
-
+    departure_location:string;
     summary:string;
-
     details:string[];
-
     itinerary:ItineraryStop[];
-
     included:string[];
-
     gallery:string[];
+    status:string;
 }

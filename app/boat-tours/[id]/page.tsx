@@ -1,19 +1,44 @@
+"use client";
+
 import Footer from "@/components/common/footer";
 import PageHero from "@/components/ui/pageHero";
 import Image from "next/image";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Package } from "@/lib/types/api/tour_packages";
 import { Clock, Users, Banknote, Activity, MapPin, Check } from "lucide-react";
-import { packages } from "@/lib/constants/tour_packages";
-
-const TOUR = packages[0];
-
-const quickFacts = [
-    { icon: Clock, label: "Duration", value: TOUR.duration },
-    { icon: Users, label: "Group size", value: `${TOUR.groupMin}–${TOUR.groupMax} guests` },
-    { icon: Banknote, label: "From", value: `${TOUR.currency} ${TOUR.price} / person` },
-    { icon: Activity, label: "Fitness", value: "Low" },
-];
 
 export default function BoatTours() {
+    const [tour, setTour] = useState<Package | null>(null);
+    const { getBoatTour } = useBoatTours();
+    const params = useParams();
+
+    const quickFacts = [
+        { icon: Clock, label: "Duration", value: tour?.duration },
+        { icon: Users, label: "Group size", value: `${tour?.group_min}–${tour?.group_max} guests` },
+        { icon: Banknote, label: "From", value: `${tour?.currency} ${tour?.price} / person` },
+        { icon: Activity, label: "Fitness", value: "Low" },
+    ];
+
+    useEffect(() => {
+
+        async function load() {
+            const tourId = params.id as string | undefined;
+
+            if (!tourId) {
+                return;
+            }
+
+            const data = await getBoatTour(tourId);
+
+            setTour(data);
+
+        }
+
+        load();
+
+    }, [params.id]);
     return (
         <main className="bg-[#FAF7F1] text-[#23231F]">
             <PageHero
@@ -49,15 +74,15 @@ export default function BoatTours() {
                     <div className="lg:col-span-7">
                         <p className="flex items-center gap-2 text-sm text-[#23231F]/60">
                             <MapPin className="h-4 w-4 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
-                            {TOUR.departureLocation}
+                            {tour?.departure_location}
                         </p>
                         <h1 className="mt-3 font-[family-name:var(--font-display)] text-4xl leading-[1.1] text-[#0E3A3B] sm:text-5xl">
-                            {TOUR.title}
+                            {tour?.title}
                         </h1>
-                        <p className="mt-4 max-w-xl text-lg text-[#23231F]/70">{TOUR.tagline}</p>
+                        <p className="mt-4 max-w-xl text-lg text-[#23231F]/70">{tour?.tagline}</p>
 
                         <div className="mt-10 space-y-4 text-[16px] leading-relaxed text-[#23231F]/80">
-                            {(Array.isArray(TOUR.description) ? TOUR.description : [TOUR.description]).map((p, i) => (
+                            {(Array.isArray(tour?.description) ? tour?.description : [tour?.description]).map((p, i) => (
                                 <p key={i}>{p}</p>
                             ))}
                         </div>
@@ -73,7 +98,7 @@ export default function BoatTours() {
                                     className="absolute left-[15px] top-2 bottom-2 w-px bg-[#0E3A3B]/12"
                                 />
                                 <div className="space-y-9">
-                                    {TOUR.itinerary.map((stop) => (
+                                    {tour?.itinerary.map((stop) => (
                                         <div key={stop.title} className="relative flex gap-6 pl-0">
                                             <span className="relative z-10 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#0E3A3B]/20 bg-[#FAF7F1] text-xs text-[#0E3A3B]">
                                                 {stop.time}
@@ -96,7 +121,7 @@ export default function BoatTours() {
                                 What's included
                             </h2>
                             <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                                {TOUR.included.map((item) => (
+                                {tour?.included.map((item) => (
                                     <li key={item} className="flex items-start gap-3 text-[15px] text-[#23231F]/80">
                                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#7E9C8F]" strokeWidth={2} aria-hidden />
                                         {item}
@@ -111,7 +136,7 @@ export default function BoatTours() {
                                 Gallery
                             </h2>
                             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                                {TOUR.gallery.map((src, i) => (
+                                {tour?.gallery.map((src, i) => (
                                     <div
                                         key={src}
                                         className={`relative aspect-[4/3] overflow-hidden rounded-xl ${i === 0 ? "col-span-2 row-span-2 aspect-square sm:aspect-[4/3.4]" : ""
@@ -119,7 +144,7 @@ export default function BoatTours() {
                                     >
                                         <Image
                                             src={src}
-                                            alt={`${TOUR.title} — photo ${i + 1}`}
+                                            alt={`${tour?.title} — photo ${i + 1}`}
                                             fill
                                             className="object-cover transition duration-500 hover:scale-105"
                                         />
@@ -133,11 +158,11 @@ export default function BoatTours() {
                     <div className="lg:col-span-5">
                         <div className="sticky top-24 rounded-2xl border border-[#0E3A3B]/10 bg-white p-8 shadow-[0_20px_50px_-25px_rgba(14,58,59,0.3)]">
                             <p className="font-[family-name:var(--font-display)] text-3xl text-[#0E3A3B]">
-                                {TOUR.currency} {TOUR.price}
+                                {tour?.currency} {tour?.price}
                                 <span className="text-base font-normal text-[#23231F]/50"> / person</span>
                             </p>
                             <p className="mt-1 text-sm text-[#23231F]/60">
-                                {TOUR.type} · {TOUR.duration}
+                                {tour?.type} · {tour?.duration}
                             </p>
 
                             <div className="mt-6 space-y-4">
@@ -182,7 +207,7 @@ export default function BoatTours() {
                                         id="tour-guests"
                                         className="mt-2 w-full appearance-none rounded-lg border border-[#0E3A3B]/15 bg-[#FAF7F1] px-4 py-3 text-sm text-[#23231F] outline-none focus-visible:ring-2 focus-visible:ring-[#B68A4E]"
                                     >
-                                        {Array.from({ length: TOUR.groupMax - TOUR.groupMin + 1 }, (_, i) => i + TOUR.groupMin).map(
+                                        {Array.from({ length: (tour?.group_max ?? 0) - (tour?.group_min ?? 0) + 1 }, (_, i) => i + (tour?.group_min ?? 0)).map(
                                             (n) => (
                                                 <option key={n} value={n}>
                                                     {n} {n === 1 ? "guest" : "guests"}

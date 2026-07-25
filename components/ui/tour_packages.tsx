@@ -1,9 +1,29 @@
 "use client";
 
-import { packages, waveClip } from "@/lib/constants/tour_packages";
+import { waveClip } from "@/lib/constants/tour_packages";
 import "../../app/css/tour_package.css";
+import { useEffect, useState } from "react";
+import { Package } from "@/lib/types/api/tour_packages";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
 
 export default function TourPackages() {
+  const [tours, setTours] = useState<Package[]>([]);
+  const { listTour, loading } = useBoatTours();
+
+  useEffect(() => {
+
+    const loadBoatTours = async () => {
+      const response = await listTour();
+
+      if (response) {
+        setTours(response as Package[]);
+      }
+    }
+
+    loadBoatTours();
+
+  }, [])
+
   return (
     <section className="py-14 sm:px-8 px-4">
       <div className="mx-auto max-w-7xl">
@@ -41,7 +61,7 @@ export default function TourPackages() {
 
         {/* Package grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {packages.map((pkg) => (
+          {tours.map((pkg) => (
             <article
               key={pkg.id}
               className="group relative bg-white rounded-[4px] overflow-hidden shadow-[0_1px_2px_rgba(14,74,69,0.08)] hover:shadow-[0_16px_32px_-12px_rgba(14,74,69,0.28)] transition-shadow duration-300"

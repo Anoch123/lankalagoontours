@@ -1,57 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/supabase";
-
+import { AdminUserProfile } from "@/lib/types/admin/adminUserProfiles";
 
 export function useAdminAuth() {
-
     const router = useRouter();
 
-    const [user, setUser] = useState<any>(null);
+    const hasChecked = useRef(false);
+
+    const [user, setUser] = useState<AdminUserProfile | null>(null);
     const [loading, setLoading] = useState(true);
 
-
     useEffect(() => {
+
+        if (hasChecked.current) return;
+
+        hasChecked.current = true;
 
         async function checkAdmin() {
 
             const supabase = createClient();
 
-
             const {
-                data: {
-                    user
-                }
+                data: { user }
             } = await supabase.auth.getUser();
 
-
             if (!user) {
-                router.replace('/lankalagoon-admin');
+                setLoading(false);
+                router.replace("/lankalagoon-admin");
                 return;
             }
-
 
             const { data: profile } =
                 await supabase
                     .from("admin_users")
                     .select("*")
                     .eq("admin_users_id", user.id)
-                    .single();
-
-
+                    .single<AdminUserProfile>();
 
             if (!profile || profile.role !== "ADMIN") {
-                router.replace('/lankalagoon-admin');
+                setLoading(false);
+                router.replace("/lankalagoon-admin");
                 return;
             }
-
 
             setUser(profile);
             setLoading(false);
         }
-
 
         checkAdmin();
 

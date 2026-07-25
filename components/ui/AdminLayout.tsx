@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter()
   const { user, loading } = useAdminAuth()
 
-  console.log('object ' , user);
+  // console.log('object ' , user);
 
   const handleLogout = async () => {
     await handleLogoutService()

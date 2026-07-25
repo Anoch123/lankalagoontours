@@ -38,14 +38,15 @@ export interface BoatTourForm {
   tag: string
   type: string
   departures: string
-  groupMin: string
-  groupMax: string
-  ageLevel: string
+  group_min: string
+  group_max: string
+  age_level: string
   fitness: string
-  departureLocation: string
+  departure_location: string
   summary: string
   details: string[]
   itinerary: ItineraryStop[]
   included: string[]
   gallery: string[]
+  status: string
 }
