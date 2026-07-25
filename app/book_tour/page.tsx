@@ -41,7 +41,6 @@ export default function BookTour() {
     const timeSlots = useMemo(() => {return formatTimeSlots(tour?.departures);}, [tour]);
 
     useEffect(() => {
-
         const loadBoatTours = async () => {
             const response = await listTour();
 
@@ -52,7 +51,7 @@ export default function BookTour() {
 
         loadBoatTours();
 
-    }, [listTour])
+    }, [])
 
     const updateGuestCount = (nextGuests: number) => {
         setGuests(nextGuests);
@@ -252,7 +251,7 @@ export default function BookTour() {
                                         <p className="mt-1 text-xs text-[#0f2e2c]/55">{t.description}</p>
                                         <div className="mt-3 flex items-center justify-between text-xs text-[#0f2e2c]/60">
                                             <span>{t.duration}</span>
-                                            <span className="font-semibold text-[#a86c1f]">Rs. {t.price.toLocaleString()} pp</span>
+                                            <span className="font-semibold text-[#a86c1f]">{t.currency} {t.price.toLocaleString()} pp</span>
                                         </div>
                                     </button>
                                 );
@@ -508,7 +507,7 @@ export default function BookTour() {
                             <div className="flex items-center justify-between">
                                 <span className={`${oswald.className} text-sm font-medium text-[#0f2e2c]`}>Total</span>
                                 <span className={`${oswald.className} text-lg font-bold text-[#0f2e2c]`}>
-                                    Rs. {total.toLocaleString()}
+                                    {tour?.currency} {total.toLocaleString()}
                                 </span>
                             </div>
                             <p className="mt-1 text-xs text-[#0f2e2c]/45">Payment confirmed after we contact you.</p>

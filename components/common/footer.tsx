@@ -1,8 +1,45 @@
+"use client";
+
 import Image from "next/image";
 import { fraunces, workSans, jetbrainsMono } from "@/lib/constants/home_about_us";
 import { ICONS, LINK_GROUPS, OFFICE_DETAILS, SOCIALS } from "@/lib/constants/footer";
+import { useEffect, useMemo, useState } from "react";
+import { useBoatTours } from "@/hooks/admin/useBoatTours";
+import { Package } from "@/lib/types/api/tour_packages";
 
 export default function Footer() {
+  const [tours, setTours] = useState<Package[]>([]);
+  const { listTour } = useBoatTours();
+
+  useEffect(() => {
+    const loadBoatTours = async () => {
+      const response = await listTour();
+
+      if (response) {
+        setTours(response as Package[]);
+      }
+    }
+
+    loadBoatTours();
+
+  }, [])
+
+  const linkGroups = useMemo(() => {
+    return LINK_GROUPS.map((group) => {
+      if (group.heading === "Our Tours") {
+        return {
+          ...group,
+          links: tours.map((tour) => ({
+            label: tour.title,
+            href: `/boat-tours/${tour.id}`,
+          })),
+        };
+      }
+
+      return group;
+    });
+  }, [tours]);
+
   return (
     <footer
       className={`${fraunces.variable} ${workSans.variable} ${jetbrainsMono.variable} bg-[#092826]`}
@@ -44,18 +81,17 @@ export default function Footer() {
           {/* Brand block */}
           <div className="lg:w-[34%] lg:pr-12">
             <Image
-              src="/images/web_logo.png"
+              src="/images/lankalagoontours_white_logo.png"
               alt="Site logo"
               width={100}
               height={30}
-              className="h-8 w-auto"
+              className="h-20 w-auto"
             />
             <p
               className="mt-5 max-w-xs text-[14px] leading-relaxed text-[#f6efde]/60"
               style={{ fontFamily: "var(--font-work-sans)" }}
             >
-              Guided lagoon &amp; mangrove tours with local boatmen, run out
-              of Negombo since day one.
+              Connecting travellers with authentic lagoon & mangrove experiences through trusted local boat operators in Negombo.
             </p>
 
             <div className="mt-7 flex items-center gap-3">
@@ -84,7 +120,7 @@ export default function Footer() {
 
           {/* Link groups + office details, laid out as an even row */}
           <div className="grid flex-1 grid-cols-2 gap-10 sm:grid-cols-3 lg:pl-12">
-            {LINK_GROUPS.map((group) => (
+            {linkGroups.map((group) => (
               <div key={group.heading}>
                 <p
                   className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#c99a3e]"
@@ -92,6 +128,7 @@ export default function Footer() {
                 >
                   {group.heading}
                 </p>
+
                 <ul className="mt-5 space-y-3">
                   {group.links.map((link) => (
                     <li key={link.label}>

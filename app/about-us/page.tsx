@@ -16,33 +16,9 @@ export default function AboutUs() {
           "Discover",
           <><span className="text-[#c9862f]">Lanka Lagoon</span></>,
         ]}
-        description="We are passionate local guides dedicated to sharing the natural beauty, rich culture, and unique wildlife of Negombo Lagoon. Every tour is designed to create authentic experiences, unforgettable memories, and a deeper connection with one of Sri Lanka's most beautiful coastal destinations."
+        description="Lanka Lagoon Tours helps travellers discover authentic lagoon experiences in Negombo by connecting them with trusted local boat operators. We make it easier to find, book, and enjoy memorable journeys through Sri Lanka's beautiful lagoon landscapes."
         imageSrc="/images/hero1.webp"
       />
-
-      <div className="border-b border-[#0f2e2c]/[0.08]">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-8 px-6 py-12 sm:grid-cols-4 lg:px-8">
-          {STATS.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`text-center ${i > 0 ? "sm:border-l sm:border-[#0f2e2c]/10" : ""}`}
-            >
-              <p
-                className="text-[30px] font-semibold text-[#c99a3e] sm:text-[36px]"
-                style={{ fontFamily: "var(--font-fraunces)" }}
-              >
-                {stat.value}
-              </p>
-              <p
-                className="mt-1 text-[12px] uppercase tracking-[0.1em] text-[#0f2e2c]/55"
-                style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-              >
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
 
       <div className="mx-auto max-w-3xl px-6 py-24 lg:px-8">
         <div className="text-center">
@@ -94,10 +70,10 @@ export default function AboutUs() {
           className="mt-12 border-l-2 border-[#c99a3e]/40 pl-6 text-[16px] italic leading-[1.9] text-[#0f2e2c]/75 sm:text-[17px]"
           style={{ fontFamily: "var(--font-work-sans)" }}
         >
-          Today, Lanka Lagoon is still run the way it started — by people who
-          know these waters personally, not just professionally. Every tour
-          we lead carries the same idea forward: growth here moves at the
-          pace the lagoon can handle, not the other way around.
+          Today, Lanka Lagoon Tours continues to focus on connecting travellers with
+          authentic lagoon experiences. By working with experienced local operators,
+          we help visitors discover the beauty of Negombo Lagoon while supporting the
+          communities that make these experiences possible.
         </p>
       </div>
 
@@ -141,11 +117,11 @@ export default function AboutUs() {
               className="mt-4 text-[15px] leading-relaxed text-[#0f2e2c]/65"
               style={{ fontFamily: "var(--font-work-sans)" }}
             >
-              The lagoon is our livelihood, so protecting it isn&apos;t
-              optional. We work alongside local conservation groups on
-              mangrove planting and clean-up days, and make sure our guests
-              understand why this ecosystem matters — not just what it looks
-              like from a boat.
+              The Negombo Lagoon is a unique ecosystem that supports wildlife, 
+              fishing communities, and local livelihoods. We believe responsible 
+              tourism plays an important role in protecting this environment by 
+              encouraging visitors to respect nature and support sustainable 
+              local experiences.
             </p>
             <p
               className="mt-4 text-[15px] leading-relaxed text-[#0f2e2c]/65"
@@ -187,7 +163,7 @@ export default function AboutUs() {
             className="mt-3 text-[28px] font-semibold text-[#0f2e2c] sm:text-[32px]"
             style={{ fontFamily: "var(--font-fraunces)" }}
           >
-            Safe, professional tours
+            Trusted local experiences
           </h2>
         </div>
 
@@ -439,67 +415,6 @@ export default function AboutUs() {
                 </div>
               );
             })}
-          </div>
-        </div>
-      </div>
-
-      {/* ------------------------------------------------------------ */}
-      {/* Certification                                                */}
-      {/* ------------------------------------------------------------ */}
-      <div className="mx-auto max-w-6xl px-6 py-20 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <span
-              className="text-[12px] font-semibold uppercase tracking-[0.18em] text-[#c99a3e]"
-              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-            >
-              Certified Operator
-            </span>
-
-            <h2
-              className="mt-3 text-[26px] font-semibold text-[#0f2e2c] sm:text-[32px]"
-              style={{ fontFamily: "var(--font-fraunces)" }}
-            >
-              Certified by the Sri Lanka Tourism Development Authority (SLTDA)
-            </h2>
-
-            <ul className="mt-8 space-y-4">
-              {CERT_POINTS.map((point) => (
-                <li key={point} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-[#c99a3e]/15 text-[#c99a3e]">
-                    <svg viewBox="0 0 16 16" className="h-3 w-3" aria-hidden="true">
-                      <path
-                        d="M3 8.5l3 3 7-7"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                  <span
-                    className="text-[15px] leading-relaxed text-[#0f2e2c]/70"
-                    style={{ fontFamily: "var(--font-work-sans)" }}
-                  >
-                    {point}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex justify-center lg:justify-end">
-            <div className="rounded-full">
-              <div className="relative overflow-hidden rounded-full sm:h-56 sm:w-56">
-                <Image
-                  src="/images/sltda_logo.png"
-                  alt="SLTDA Certificate"
-                  fill
-                  className="object-contain p-6"
-                />
-              </div>
-            </div>
           </div>
         </div>
       </div>

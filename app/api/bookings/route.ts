@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/supabase-admin";
 import { bookingSchema, bookingPassengerSchema } from "@/lib/validations/booking.schema";
+import { sendBookingCustomerEmail, sendBookingAdminEmail, type BookingEmailData } from "@/lib/email";
 
 export async function POST(request: Request) {
     try {
@@ -45,6 +46,47 @@ export async function POST(request: Request) {
 
         if (passengerError) {
             return NextResponse.json({ error: passengerError.message || "Unable to save passengers" }, { status: 400 });
+        }
+
+        const { data: tour } = await supabase
+            .from("boat_tours")
+            .select("title, price, currency, duration")
+            .eq("id", bookingPayload.tour_id)
+            .single();
+
+        const currency = tour?.currency ?? "LKR";
+
+        const emailData: BookingEmailData = {
+            bookingNumber: bookingPayload.booking_number,
+            tourTitle: tour?.title ?? "Tour Booking",
+            bookingDate: bookingPayload.booking_date,
+            departureTime: bookingPayload.departure_time,
+            guestCount: bookingPayload.guest_count,
+            totalPrice: bookingPayload.total_price,
+            currency,
+            leadName: bookingPayload.lead_name,
+            email: bookingPayload.email,
+            phone: bookingPayload.phone,
+            remarks: bookingPayload.remarks ?? "",
+            status: bookingPayload.status,
+            passengers: passengersPayload.map((p: { first_name: string; last_name: string; country: string; is_lead: boolean }) => ({
+                firstName: p.first_name,
+                lastName: p.last_name,
+                country: p.country,
+                isLead: p.is_lead,
+            })),
+        };
+
+        const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL || ""}/lankalagoon-admin/bookings/${booking.id}`;
+
+        const emailResults = await Promise.allSettled([
+            sendBookingCustomerEmail(emailData),
+            sendBookingAdminEmail(emailData, adminUrl),
+        ]);
+
+        const emailErrors = emailResults.filter((r) => r.status === "rejected").map((r) => (r as PromiseRejectedResult).reason);
+        if (emailErrors.length > 0) {
+            console.error("Booking email send failed", emailErrors);
         }
 
         return NextResponse.json({ success: true, booking });

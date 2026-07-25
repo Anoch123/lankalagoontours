@@ -21,6 +21,8 @@ export default function BoatTours() {
         { icon: Activity, label: "Fitness", value: "Low" },
     ];
 
+    const stampTilts = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
+
     useEffect(() => {
 
         async function load() {
@@ -48,25 +50,6 @@ export default function BoatTours() {
                 imageSrc="/images/hero1.webp"
             />
 
-            {/* ---------------- QUICK FACTS — floats over hero/content seam ---------------- */}
-            <div className="relative z-10 mx-auto -mt-14 max-w-6xl px-6 sm:px-10">
-                <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[#0E3A3B]/10 bg-[#0E3A3B]/10 shadow-[0_20px_50px_-20px_rgba(14,58,59,0.35)] sm:grid-cols-4">
-                    {quickFacts.map(({ icon: Icon, label, value }) => (
-                        <div key={label} className="flex items-center gap-3 bg-[#FAF7F1] px-6 py-6">
-                            <Icon className="h-5 w-5 shrink-0 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
-                            <div>
-                                <p className="text-[11px] uppercase tracking-[0.12em] text-[#23231F]/50">
-                                    {label}
-                                </p>
-                                <p className="mt-0.5 font-[family-name:var(--font-display)] text-base text-[#0E3A3B]">
-                                    {value}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
             {/* ---------------- MAIN: content + sticky booking card ---------------- */}
             <section className="mx-auto max-w-6xl px-6 py-20 sm:px-10">
                 <div className="grid gap-16 lg:grid-cols-12">
@@ -80,6 +63,40 @@ export default function BoatTours() {
                             {tour?.title}
                         </h1>
                         <p className="mt-4 max-w-xl text-lg text-[#23231F]/70">{tour?.tagline}</p>
+
+                        <div className="mt-10">
+                            <p className="text-[10px] uppercase tracking-[0.22em] text-[#1B2A4A]/40">
+                                At a glance
+                            </p>
+                            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                                {quickFacts.map(({ icon: Icon, label, value }, i) => (
+                                    <div
+                                        key={label}
+                                        className={`overflow-hidden rounded-sm border-2 border-dashed border-[#1B2A4A]/20 bg-white text-center shadow-[0_10px_20px_-12px_rgba(27,42,74,0.35)] transition duration-300 hover:rotate-0 ${stampTilts[i % stampTilts.length]}`}
+                                    >
+                                        <div
+                                            className="h-1.5 w-full"
+                                            style={{
+                                                backgroundImage:
+                                                    "repeating-linear-gradient(45deg, #E2703A 0 8px, #1B2A4A 8px 16px)",
+                                            }}
+                                            aria-hidden
+                                        />
+                                        <div className="px-4 pb-5 pt-2 sm:px-5">
+                                            <div className="mx-auto -mt-7 flex h-14 w-14 items-center justify-center rounded-full border-4 border-white bg-[#1B2A4A] shadow-sm">
+                                                <Icon className="h-5 w-5 text-[#E2703A]" strokeWidth={1.5} aria-hidden />
+                                            </div>
+                                            <p className="mt-3 text-[10px] uppercase tracking-[0.16em] text-[#1B2A4A]/45">
+                                                {label}
+                                            </p>
+                                            <p className="mt-1 font-[family-name:var(--font-display)] text-base text-[#1B2A4A]">
+                                                {value}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
                         <div className="mt-10 space-y-4 text-[16px] leading-relaxed text-[#23231F]/80">
                             {(Array.isArray(tour?.description) ? tour?.description : [tour?.description]).map((p, i) => (

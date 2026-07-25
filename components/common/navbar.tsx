@@ -199,7 +199,7 @@ export default function Navbar() {
         <header className="navbar">
             <div className="logo">
                 <Link href="/">
-                    <img src="/images/web_logo.png" className="text-white" alt={app_text_constants.APP_NAME} />
+                    <img src="/images/lankalagoontours_white_logo.png" className="text-white" alt={app_text_constants.APP_NAME} />
                 </Link>
             </div>
 
@@ -221,7 +221,7 @@ export default function Navbar() {
             <nav className={`mobile-nav app-shell ${mobileOpen ? "open" : ""}`}>
                 <div className="mobile-nav-header">
                     <Link href="/" onClick={() => setMobileOpen(false)}>
-                        <img src="/images/web_logo.png" alt={app_text_constants.APP_NAME} />
+                        <img src="/images/lankalagoontours.png" alt={app_text_constants.APP_NAME} />
                     </Link>
                     <button className="close-btn" onClick={() => setMobileOpen(false)} aria-label="Close menu">✕</button>
                 </div>

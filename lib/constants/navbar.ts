@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 const MENU = [
     { label: "HOME", href: "/" },
     { label: "ABOUT US", href: "/about-us" },
+    { label: "OUR TOUR PARTNER", href: "/our-tour-partner" },
     {
         label: "BOAT TOURS", href: "/boat-tours",
         children: [

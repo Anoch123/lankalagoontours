@@ -1,52 +1,52 @@
 export const STATS = [
-  { value: "10+", label: "Years on the lagoon" },
-  { value: "3", label: "Modern tour boats" },
-  { value: "15k+", label: "Guests welcomed" },
-  { value: "SLTDA", label: "Registered operator" },
+  { value: "1", label: "Trusted local partner network" },
+  { value: "Daily", label: "Lagoon experiences available" },
+  { value: "Negombo", label: "Our focus destination" },
+  { value: "Local", label: "Tour experiences" },
 ];
 
 export const TIMELINE = [
   {
-    year: "Early days",
-    title: "A family trade, not a business plan",
-    copy: "Fishing the Negombo lagoon was how our families made a living, long before the first tourist ever asked to come along.",
+    year: "The beginning",
+    title: "Connecting travellers with local experiences",
+    copy: "Lanka Lagoon Tours was created to help visitors discover the beauty of Negombo Lagoon while supporting experienced local boat operators and their communities.",
   },
   {
-    year: "First boat",
-    title: "One small boat, word of mouth",
-    copy: "What started as the odd guided trip for curious visitors slowly turned into something people started asking for by name.",
+    year: "Building partnerships",
+    title: "Working with trusted local operators",
+    copy: "We partner with established lagoon tour providers who bring years of knowledge, local stories, and safe boating experiences to visitors.",
   },
   {
     year: "Today",
-    title: "A proper base, a proper fleet",
-    copy: "Now we run tourism-built boats from our own landing on the water, still working hand in hand with the same local community.",
+    title: "Making lagoon experiences easier to discover",
+    copy: "Today, Lanka Lagoon Tours helps travellers find, book, and enjoy authentic lagoon adventures through our trusted tourism partners.",
   },
 ];
 
 export const SAFETY_POINTS = [
   {
-    title: "Built for tourism",
-    copy: "Modern, low-emission boats — not repurposed fishing craft.",
+    title: "Trusted local operators",
+    copy: "We work with experienced boat operators who understand Negombo Lagoon and local conditions.",
   },
   {
-    title: "Fully licensed",
-    copy: "Seaworthiness and fire-rating certification on every boat.",
+    title: "Safety comes first",
+    copy: "Our partner operators follow appropriate safety procedures and provide required safety equipment.",
   },
   {
-    title: "Insured",
-    copy: "Public liability cover for both boats and land-based facilities.",
+    title: "Local knowledge",
+    copy: "Experienced guides share the lagoon's wildlife, culture, and history with visitors.",
   },
   {
-    title: "Trained crew",
-    copy: "Lifeguard and first-aid trained, on every single tour.",
+    title: "Guest support",
+    copy: "We assist travellers before booking and help connect them with the right experience.",
   },
   {
-    title: "Certified skippers",
-    copy: "Official coxswain certification, no exceptions.",
+    title: "Responsible tourism",
+    copy: "We encourage respectful travel practices that protect the lagoon environment.",
   },
   {
-    title: "English-speaking guides",
-    copy: "Fluent local guides who know the lagoon by heart.",
+    title: "Authentic experiences",
+    copy: "We focus on connecting guests with genuine local tourism providers.",
   },
 ];
 
@@ -68,20 +68,20 @@ export const GALLERY = [
 export const REVIEWS = [
   {
     quote:
-      "Our guide knew every bird call and every family who lived along the water. Felt nothing like a tourist trap.",
+      "The boat operator shared amazing stories about the lagoon and the local way of life. It felt like a real Sri Lankan experience.",
     name: "Hannah W.",
     trip: "Sunset Mangrove Tour",
   },
   {
     quote:
-      "Booked same-day and the captain still gave us the full story of the lagoon, not just a boat ride.",
+      "Booking was easy and the local team made us feel welcome from the moment we arrived.",
     name: "Dinesh R.",
-    trip: "Fishing Village Tour",
+    trip: "Negombo Lagoon Experience",
   },
   {
     quote:
-      "You can tell these are local people, not a franchise. Loved that a part of it goes to mangrove replanting.",
+      "A beautiful way to see the lagoon while supporting local tourism.",
     name: "Marta G.",
-    trip: "Full-Day Lagoon Explorer",
-  },
+    trip: "Lagoon Explorer",
+  }
 ];
