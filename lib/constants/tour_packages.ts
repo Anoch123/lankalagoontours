@@ -20,6 +20,7 @@ export const packages: Package[] = [
     age_level: "All ages welcome",
     fitness: "Low — mostly seated",
     departure_location: "Lanka Lagoon Jetty, Negombo",
+    departure_details: "Please arrive 15 minutes before departure. The tour departs from the Lanka Lagoon Jetty, located at the end of the Negombo Lagoon Road.",
     status: "ACTIVE",
     summary:
       "Glide out from the fishing jetty at first light, thread the old Dutch canal, and drift into mangrove channels where the lagoon does most of the talking.",
@@ -91,7 +92,7 @@ export const packages: Package[] = [
     age_level: "All ages welcome",
     fitness: "Very low",
     departure_location: "Lanka Lagoon Jetty, Negombo",
-
+    departure_details: "Please arrive 15 minutes before departure. The tour departs from the Lanka Lagoon Jetty, located at the end of the Negombo Lagoon Road.",
     summary:
       "A peaceful evening cruise across Negombo lagoon as the sun disappears behind coconut palms.",
 
