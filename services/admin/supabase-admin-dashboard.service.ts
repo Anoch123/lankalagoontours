@@ -1,5 +1,4 @@
 import { createClient } from "@/lib/supabase/supabase-admin";
-import type { Booking } from "@/lib/types/api/bookings";
 
 function getMonthRange() {
     const now = new Date();
@@ -20,37 +19,80 @@ export async function getDashboardStats() {
     const { startOfMonth, endOfMonth } = getMonthRange();
     const { startOfLastMonth, endOfLastMonth } = getLastMonthRange();
 
-    const thisMonthBookings = await supabase
+    const thisMonthResult = await supabase
         .from("bookings")
-        .select("id, total_price, booking_passengers(id)")
+        .select("id, total_price")
         .gte("created_at", startOfMonth.toISOString())
         .lte("created_at", endOfMonth.toISOString());
 
-    const lastMonthBookings = await supabase
+    if (thisMonthResult.error) throw thisMonthResult.error;
+
+    const lastMonthResult = await supabase
         .from("bookings")
-        .select("id, total_price, booking_passengers(id)")
+        .select("id, total_price")
         .gte("created_at", startOfLastMonth.toISOString())
         .lte("created_at", endOfLastMonth.toISOString());
 
-    const totalBookings = await supabase
+    if (lastMonthResult.error) throw lastMonthResult.error;
+
+    const paidThisMonthResult = await supabase
+        .from("bookings")
+        .select("id, total_price")
+        .gte("created_at", startOfMonth.toISOString())
+        .lte("created_at", endOfMonth.toISOString())
+        .eq("payment_status", "paid");
+
+    if (paidThisMonthResult.error) throw paidThisMonthResult.error;
+
+    const paidLastMonthResult = await supabase
+        .from("bookings")
+        .select("id, total_price")
+        .gte("created_at", startOfLastMonth.toISOString())
+        .lte("created_at", endOfLastMonth.toISOString())
+        .eq("payment_status", "paid");
+
+    if (paidLastMonthResult.error) throw paidLastMonthResult.error;
+
+    const totalResult = await supabase
         .from("bookings")
         .select("id", { count: "exact", head: true });
 
-    const thisMonthCount = thisMonthBookings.data?.length ?? 0;
-    const lastMonthCount = lastMonthBookings.data?.length ?? 0;
-    const thisMonthTotal = thisMonthBookings.data?.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0) ?? 0;
-    const lastMonthTotal = lastMonthBookings.data?.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0) ?? 0;
+    if (totalResult.error) throw totalResult.error;
 
-    const thisMonthCustomerIds = new Set(
-        thisMonthBookings.data?.flatMap((b: Booking) => b.booking_passengers?.map((p) => p.id) ?? [])
-    );
-    const lastMonthCustomerIds = new Set(
-        lastMonthBookings.data?.flatMap((b: Booking) => b.booking_passengers?.map((p) => p.id) ?? [])
-    );
+    const thisMonthBookings = thisMonthResult.data ?? [];
+    const lastMonthBookings = lastMonthResult.data ?? [];
+    const paidThisMonthBookings = paidThisMonthResult.data ?? [];
+    const paidLastMonthBookings = paidLastMonthResult.data ?? [];
 
-    const thisMonthCust = thisMonthCustomerIds.size;
-    const lastMonthCust = lastMonthCustomerIds.size;
-    const totalCount = totalBookings.count ?? 0;
+    const thisMonthCount = thisMonthBookings.length;
+    const lastMonthCount = lastMonthBookings.length;
+    const thisMonthTotal = paidThisMonthBookings.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0);
+    const lastMonthTotal = paidLastMonthBookings.reduce((sum, b) => sum + Number(b.total_price ?? 0), 0);
+
+    const thisMonthBookingIds = new Set(thisMonthBookings.map((b) => b.id));
+    const lastMonthBookingIds = new Set(lastMonthBookings.map((b) => b.id));
+
+    let thisMonthCust = 0;
+    let lastMonthCust = 0;
+
+    if (thisMonthBookingIds.size > 0) {
+        const thisMonthPassengers = await supabase
+            .from("booking_passengers")
+            .select("id")
+            .in("booking_id", Array.from(thisMonthBookingIds));
+        if (thisMonthPassengers.error) throw thisMonthPassengers.error;
+        thisMonthCust = thisMonthPassengers.data?.length ?? 0;
+    }
+
+    if (lastMonthBookingIds.size > 0) {
+        const lastMonthPassengers = await supabase
+            .from("booking_passengers")
+            .select("id")
+            .in("booking_id", Array.from(lastMonthBookingIds));
+        if (lastMonthPassengers.error) throw lastMonthPassengers.error;
+        lastMonthCust = lastMonthPassengers.data?.length ?? 0;
+    }
+    const totalCount = totalResult.count ?? 0;
 
     function pctChange(current: number, previous: number) {
         if (previous === 0) return current > 0 ? "+100%" : "0%";
@@ -69,7 +111,7 @@ export async function getDashboardStats() {
         },
         revenue: {
             label: "Revenue",
-            value: `LKR ${(thisMonthTotal / 1000).toFixed(1)}K`,
+            value: `LKR ${thisMonthTotal.toLocaleString()}`,
             change: pctChange(thisMonthTotal, lastMonthTotal),
             positive: thisMonthTotal >= lastMonthTotal,
             icon: "💵",

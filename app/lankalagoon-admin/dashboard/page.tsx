@@ -4,13 +4,23 @@ import AdminLayout from '@/components/ui/AdminLayout'
 import { useDashboardStats } from '@/hooks/admin/useDashboardStats'
 
 export default function AdminDashboardPage() {
-    const { stats, loading } = useDashboardStats()
+    const { stats, loading, error } = useDashboardStats()
 
     if (loading) {
         return (
             <AdminLayout>
                 <div className="p-6 text-center text-sm text-gray-500">
                     Loading dashboard stats…
+                </div>
+            </AdminLayout>
+        )
+    }
+
+    if (error) {
+        return (
+            <AdminLayout>
+                <div className="p-6 text-center text-sm text-red-500">
+                    Failed to load dashboard stats: {error}
                 </div>
             </AdminLayout>
         )
@@ -41,29 +51,36 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Stat cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                    {stats.map((stat) => (
-                        <div
-                            key={stat.label}
-                            className="rounded-2xl bg-white border border-[#EDE4D3] p-5 shadow-sm"
-                        >
-                            <div className="flex items-start justify-between">
-                                <span className="text-2xl">{stat.icon}</span>
-                                <span
-                                    className={`text-xs font-medium px-2 py-1 rounded-full ${
-                                        stat.positive
-                                            ? 'bg-[#E9F1E7] text-[#588157]'
-                                            : 'bg-[#FBE9E4] text-[#E76F51]'
-                                    }`}
-                                >
-                                    {stat.change}
-                                </span>
+                {stats.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                        {stats.map((stat) => (
+                            <div
+                                key={stat.label}
+                                className="rounded-2xl bg-white border border-[#EDE4D3] p-5 shadow-sm"
+                            >
+                                <div className="flex items-start justify-between">
+                                    <span className="text-2xl">{stat.icon}</span>
+                                    <span
+                                        className={`text-xs font-medium px-2 py-1 rounded-full ${
+                                            stat.positive
+                                                ? 'bg-[#E9F1E7] text-[#588157]'
+                                                : 'bg-[#FBE9E4] text-[#E76F51]'
+                                        }`}
+                                    >
+                                        {stat.change}
+                                    </span>
+                                </div>
+                                <p className="font-display text-2xl mt-4 text-[#16302E]">{stat.value}</p>
+                                <p className="text-sm text-[#4A625F] mt-1">{stat.label}</p>
                             </div>
-                            <p className="font-display text-2xl mt-4 text-[#16302E]">{stat.value}</p>
-                            <p className="text-sm text-[#4A625F] mt-1">{stat.label}</p>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="rounded-2xl border border-dashed border-[#DCCFB2] p-10 text-center text-[#4A625F]">
+                        <p className="font-display text-lg text-[#16302E] mb-1">No stats available</p>
+                        <p className="text-sm">No booking data found yet.</p>
+                    </div>
+                )}
 
                 {/* Placeholder for future widgets */}
                 <div className="rounded-2xl border border-dashed border-[#DCCFB2] p-10 text-center text-[#4A625F]">
