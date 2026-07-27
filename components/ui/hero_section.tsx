@@ -110,7 +110,7 @@ export default function HeroSection() {
                       {slide.description}
                     </p>
 
-                    <div className="slide-buttons" data-swiper-parallax="-400">
+                    {/* <div className="slide-buttons" data-swiper-parallax="-400">
                       <button
                         className="slide-btn"
                         onClick={() => {
@@ -119,7 +119,7 @@ export default function HeroSection() {
                       >
                         {slide.ctaPrimary.label}
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>
