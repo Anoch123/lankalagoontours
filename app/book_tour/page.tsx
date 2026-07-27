@@ -38,7 +38,8 @@ export default function BookTour() {
     const tour = tours.find((t) => t.id === selectedTour) ?? null;
     const cells = useMemo(() => getMonthGrid(viewYear, viewMonth), [viewYear, viewMonth]);
     const monthLabel = new Date(viewYear, viewMonth).toLocaleString("en-US", { month: "long", year: "numeric" });
-    const timeSlots = useMemo(() => {return formatTimeSlots(tour?.departures);}, [tour]);
+    const timeSlots = useMemo(() => { return formatTimeSlots(tour?.departures); }, [tour]);
+    const departure_details = tour?.departure_details ?? null;
 
     useEffect(() => {
         const loadBoatTours = async () => {
@@ -337,6 +338,21 @@ export default function BookTour() {
                                 })}
                             </div>
                         )}
+
+                        {
+                            selectedDate && (
+                                <div className="mt-4 flex flex-wrap gap-2">
+                                    {departure_details && (
+                                        <p
+                                            className="text-xs text-[#0f2e2c]/70 italic font-bold"
+                                            dangerouslySetInnerHTML={{
+                                                __html: departure_details
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            )
+                        }
                     </section>
 
                     {/* Step 3 — Confirm Passage */}

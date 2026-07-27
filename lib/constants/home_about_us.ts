@@ -18,15 +18,29 @@ export const jetbrainsMono = JetBrains_Mono({
 });
 
 export const credentials = [
-  "Licensed & insured",
-  "Family-run since 2010",
-  "Highly Experienced guides",
+  "Trusted local tourism partners",
+  "Easy online booking assistance",
+  "Authentic Negombo lagoon experiences",
+  "Support before and after your booking",
 ];
 
 export const stats = [
-  { value: "15+", label: "Years on the water" },
-  { value: "9,000+", label: "Tours run" },
-  { value: "12", label: "Local crew" },
+  {
+    value: "100%",
+    label: "Local experiences",
+  },
+  {
+    value: "Daily",
+    label: "Tours available",
+  },
+  {
+    value: "Negombo",
+    label: "Lagoon destination",
+  },
+  {
+    value: "Trusted",
+    label: "Partner operators",
+  },
 ];
 
 export const route = [

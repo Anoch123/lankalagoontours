@@ -1,6 +1,6 @@
 "use client";
 
-import { getBooking, listCustomerBookings } from "@/services/admin/supabase-admin-booking.service";
+import { getBooking, listCustomerBookings } from "@/services/admin/supabase-admin-booking-read.service";
 import { useState } from "react";
 
 export function useBookings() {
@@ -25,10 +25,25 @@ export function useBookings() {
         }
     }
 
+    async function confirmBooking(bookingId: string) {
+        const response = await fetch(`/api/bookings/${bookingId}/confirm`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({}),
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Failed to confirm booking");
+        }
+
+        return response.json();
+    }
+
     return {
         listBookings,
         getBookingById,
+        confirmBooking,
         loading
     };
-
 }

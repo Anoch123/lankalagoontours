@@ -15,6 +15,7 @@ export interface Package {
     tag:string;
     type:string;
     departures:string;
+    departure_details:string;
     group_min:number;
     group_max:number;
     age_level:string;

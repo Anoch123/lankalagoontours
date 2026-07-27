@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PageHero from "@/components/ui/pageHero";
 import Footer from "@/components/common/footer";
-import { oswald, TOUR_INTERESTS } from "@/lib/constants/contact_us";
+import { oswald, COUNTRIES } from "@/lib/constants/contact_us";
 
 const MOORINGS = [
     {
@@ -50,19 +50,62 @@ const MOORINGS = [
 
 export default function ContactUs() {
     const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
-    const [interest, setInterest] = useState<(typeof TOUR_INTERESTS)[number] | null>(null);
-    const [interestOpen, setInterestOpen] = useState(false);
+    const [interest, setInterest] = useState<(typeof COUNTRIES)[number] | null>(null);
+    const [selectCountryOpen, setSelectCountryOpen] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const countryDropdownRef = useRef<HTMLDivElement>(null);
 
     const handleChange = (field: keyof typeof form) => (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // wire up to your submission endpoint here
-        setSubmitted(true);
+        setLoading(true);
+        setError(null);
+        try {
+            const res = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: form.name,
+                    email: form.email,
+                    phone: form.phone,
+                    country: interest,
+                    message: form.message,
+                }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.error || "Something went wrong. Please try again.");
+            }
+            setSubmitted(true);
+            setForm({ name: "", email: "", phone: "", message: "" });
+            setInterest(null);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
+
+    useEffect(() => {
+        if (!selectCountryOpen) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                countryDropdownRef.current &&
+                !countryDropdownRef.current.contains(e.target as Node)
+            ) {
+                setSelectCountryOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [selectCountryOpen]);
 
     return (
         <div className="min-h-screen">
@@ -138,35 +181,34 @@ export default function ContactUs() {
                     </label>
 
                     {/* Custom dropdown — not a native select */}
-                    <div className="relative mt-5 flex flex-col gap-2">
+                    <div ref={countryDropdownRef} className="relative mt-5 flex flex-col gap-2">
                         <span className={`${oswald.className} text-xs font-medium tracking-wide text-[#0f2e2c]/70`}>
-                            Tour interest
+                            Country From
                         </span>
                         <button
                             type="button"
-                            onClick={() => setInterestOpen((v) => !v)}
-                            aria-expanded={interestOpen}
+                            onClick={() => setSelectCountryOpen((v) => !v)}
+                            aria-expanded={selectCountryOpen}
                             className="flex items-center justify-between rounded-lg border border-[#0f2e2c]/15 bg-transparent px-4 py-3 text-left text-sm text-[#0f2e2c] transition-colors hover:border-[#c9862f]/60"
                         >
                             <span className={interest ? "text-[#0f2e2c]" : "text-[#0f2e2c]/35"}>
-                                {interest ?? "Select a tour"}
+                                {interest ?? "Select a country"}
                             </span>
                             <span
-                                className={`h-2 w-2 border-b-2 border-r-2 border-[#0f2e2c]/50 transition-transform ${
-                                    interestOpen ? "-translate-y-0.5 -rotate-135" : "rotate-45"
-                                }`}
+                                className={`h-2 w-2 border-b-2 border-r-2 border-[#0f2e2c]/50 transition-transform ${selectCountryOpen ? "-translate-y-0.5 -rotate-135" : "rotate-45"
+                                    }`}
                             />
                         </button>
 
-                        {interestOpen && (
-                            <div className="absolute top-full z-20 mt-2 w-full overflow-hidden rounded-lg border border-[#0f2e2c]/10 bg-[#faf8f3] shadow-lg">
-                                {TOUR_INTERESTS.map((opt) => (
+                        {selectCountryOpen && (
+                            <div className="absolute top-full z-20 mt-2 max-h-60 w-full overflow-y-auto rounded-lg border border-[#0f2e2c]/10 bg-[#faf8f3] shadow-lg">
+                                {COUNTRIES.map((opt) => (
                                     <button
                                         key={opt}
                                         type="button"
                                         onClick={() => {
                                             setInterest(opt);
-                                            setInterestOpen(false);
+                                            setSelectCountryOpen(false);
                                         }}
                                         className={`${oswald.className} block w-full px-4 py-3 text-left text-sm font-medium text-[#0f2e2c] transition-colors hover:bg-[#c9862f]/10 hover:text-[#a86c1f]`}
                                     >
@@ -193,14 +235,19 @@ export default function ContactUs() {
 
                     <button
                         type="submit"
-                        className={`${oswald.className} mt-6 inline-flex items-center gap-2 rounded-full bg-[#c9862f] px-7 py-3 text-sm font-semibold text-[#0f2e2c] transition-transform hover:-translate-y-0.5 hover:bg-[#e7c16f]`}
+                        disabled={loading}
+                        className={`${oswald.className} mt-6 inline-flex items-center gap-2 rounded-full bg-[#c9862f] px-7 py-3 text-sm font-semibold text-[#0f2e2c] transition-transform hover:-translate-y-0.5 hover:bg-[#e7c16f] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none`}
                     >
-                        Send Message
+                        {loading ? "Sending..." : "Send Message"}
                     </button>
 
-                    {submitted && (
+                    {error && (
+                        <p className="mt-4 text-sm text-red-500">{error}</p>
+                    )}
+
+                    {submitted && !error && (
                         <p className="mt-4 text-sm text-[#a86c1f]">
-                            Thanks — your message is in. We'll be in touch shortly.
+                            Thanks — your message has been sent successfully. We'll be in touch shortly.
                         </p>
                     )}
                 </form>

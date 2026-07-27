@@ -14,6 +14,7 @@ function buildSupabasePayload(tour: Package) {
         tag: tour.tag,
         type: tour.type,
         departures: tour.departures,
+        departure_details: tour.departure_details,
         group_min: Number(tour.group_min),
         group_max: Number(tour.group_max),
         age_level: tour.age_level,

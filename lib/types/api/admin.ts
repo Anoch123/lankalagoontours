@@ -38,6 +38,7 @@ export interface BoatTourForm {
   tag: string
   type: string
   departures: string
+  departure_details: string
   group_min: string
   group_max: string
   age_level: string

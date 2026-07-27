@@ -69,7 +69,7 @@ export default function AdminBoatTours() {
             );
 
             const response = await saveTour(buildPayload());
-            console.log('response ' , response);
+            console.log('response ', response);
 
             if (!response.success) {
                 setMessage(response.message);
@@ -267,6 +267,15 @@ export default function AdminBoatTours() {
                             value={tour.departures}
                             onChange={(e) => update('departures', e.target.value)}
                             placeholder="06:30 & 15:30 daily"
+                        />
+                    </Field>
+
+                    <Field label="Departure Details" hint="E.g. '06:30 AM SUNSET & 15:30 PM DAILY'">
+                        <input
+                            className={inputClass}
+                            value={tour.departure_details}
+                            onChange={(e) => update('departure_details', e.target.value)}
+                            placeholder="06:30 AM SUNSET & 15:30 PM DAILY"
                         />
                     </Field>
                 </Section>
