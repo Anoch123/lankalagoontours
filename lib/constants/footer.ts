@@ -20,7 +20,7 @@ export const LINK_GROUPS: LinkGroup[] = [
     links: [
       { label: "Our Tour Partners", href: "/our-tour-partner" },
       { label: "Booking Terms & Partner Conditions", href: "/booking-terms-and-partner-conditions" },
-      { label: "Gallery", href: "/gallery" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Contact Us", href: "/contact-us" },
     ],
   },
