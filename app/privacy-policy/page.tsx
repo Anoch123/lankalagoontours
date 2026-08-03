@@ -44,8 +44,7 @@ const SECTIONS = [
                     <ul className="mt-2 list-inside list-disc space-y-1 pl-1">
                         <li>Full name.</li>
                         <li>Email address.</li>
-                        <li>Phone or WhatsApp number.</li>
-                        <li>Country of residence.</li>
+                        <li>Phone Number.</li>
                         <li>Number of guests.</li>
                         <li>Preferred tour date and time.</li>
                         <li>Special requests or dietary requirements.</li>
@@ -74,15 +73,7 @@ const SECTIONS = [
                 </div>
                 <div>
                     <h4 className="font-semibold text-[#0f2e2c]">Technical information</h4>
-                    <p className="mt-2">When you browse our website, we may automatically collect:</p>
-                    <ul className="mt-2 list-inside list-disc space-y-1 pl-1">
-                        <li>IP address.</li>
-                        <li>Browser type.</li>
-                        <li>Device information.</li>
-                        <li>Pages visited.</li>
-                        <li>Date and time of access.</li>
-                        <li>Cookies and analytics data.</li>
-                    </ul>
+                    <p className="mt-2">When you browse our website, we do not collect any of your information:</p>
                 </div>
             </div>
         ),
@@ -133,42 +124,11 @@ const SECTIONS = [
         title: "Cookies",
         body: (
             <div className="space-y-3">
-                <p>Our website may use cookies to:</p>
-                <ul className="list-inside list-disc space-y-1 pl-1">
-                    <li>Improve website performance.</li>
-                    <li>Remember your preferences.</li>
-                    <li>Measure website traffic.</li>
-                    <li>Understand how visitors use our website.</li>
-                </ul>
+                <p>Our website does not collect or use cookies in any way.</p>
                 <p>
-                    You can disable cookies through your browser settings, although some website
-                    features may not function correctly.
+                    You can disable cookies through your browser settings, if you feel it necessary.
                 </p>
             </div>
-        ),
-    },
-    {
-        id: "analytics",
-        number: "6",
-        title: "Analytics",
-        body: (
-            <p>
-                We may use analytics tools such as Google Analytics or similar services to
-                understand website usage and improve user experience. These services may collect
-                anonymous usage information through cookies.
-            </p>
-        ),
-    },
-    {
-        id: "marketing-communications",
-        number: "7",
-        title: "Marketing communications",
-        body: (
-            <p>
-                If you subscribe to our newsletter or request updates, we may send occasional
-                promotional emails. You may unsubscribe at any time using the unsubscribe link
-                included in our emails or by contacting us directly.
-            </p>
         ),
     },
     {
@@ -250,7 +210,7 @@ const SECTIONS = [
         title: "Third-party links",
         body: (
             <p>
-                Our website may contain links to third-party websites. We are not responsible for
+                Our website may or may not contain links to third-party websites. We are not responsible for
                 the privacy practices or content of those websites. We encourage you to review their
                 privacy policies before providing any personal information.
             </p>
@@ -293,13 +253,37 @@ const SECTIONS = [
                 <p className="font-semibold text-[#0f2e2c]">
                     Lanka Lagoon Tours
                     <span className="block font-normal text-[#0f2e2c]/60">
-                        Email: info@lankalagoon.com
+                        Email: coming soon (still in development)
                     </span>
                     <span className="block font-normal text-[#0f2e2c]/60">
-                        Website: www.lankalagoon.com
+                        Website: coming soon (still in development)
                     </span>
                 </p>
                 <p>If your contact details change, this Privacy Policy will be updated accordingly.</p>
+            </div>
+        ),
+    },
+    {
+        id: "privacy-policy-version",
+        number: "15",
+        title: "Privacy Policy Version",
+        body: (
+            <div className="space-y-3">
+                <p>
+                    This Privacy Policy was last updated on 15 June 2024. It is the most current version and supersedes any previous versions. Please check this page regularly for updates.
+                </p>
+                <p>
+                    If you have any questions or concerns about this Privacy Policy, please contact us
+                    using the details provided above.
+                </p>
+                <p>
+                    By continuing to use our website and services, you acknowledge that you have read,
+                    understood, and agreed to the terms of this Privacy Policy.
+                </p>
+                <p>
+                    Thank you for trusting Lanka Lagoon Tours with your personal information. We are
+                    committed to protecting your privacy and providing a safe and enjoyable experience.
+                </p>
             </div>
         ),
     },
