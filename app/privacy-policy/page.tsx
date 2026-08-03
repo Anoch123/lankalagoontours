@@ -270,7 +270,7 @@ const SECTIONS = [
         body: (
             <div className="space-y-3">
                 <p>
-                    This Privacy Policy was last updated on 25 June 2026. It is the most current version and supersedes any previous versions. Please check this page regularly for updates.
+                    This Privacy Policy was last updated on 25 June 2026. It is the most current version. Please check this page regularly for updates.
                 </p>
                 <p>
                     If you have any questions or concerns about this Privacy Policy, please contact us
