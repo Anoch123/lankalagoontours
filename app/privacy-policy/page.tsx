@@ -265,7 +265,7 @@ const SECTIONS = [
     },
     {
         id: "privacy-policy-version",
-        number: "15",
+        number: "16",
         title: "Privacy Policy Version",
         body: (
             <div className="space-y-3">
