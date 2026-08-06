@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useBoatTours } from "@/hooks/admin/useBoatTours";
 import { Passenger } from "@/lib/types/tour_booking";
 import { emptyPassenger, formatTimeSlots, getMonthGrid, getNextMonth, isPastDay } from "@/lib/utils/bookTour";
+import { Banknote } from "lucide-react";
 
 const oswald = Oswald({
     weight: ["500", "700"],
@@ -249,7 +250,7 @@ export default function BookTour() {
                                                     }`}
                                             />
                                         </div>
-                                        <p className="mt-1 text-xs text-[#0f2e2c]/55">{t.description}</p>
+                                        <p className="mt-1 text-xs text-[#0f2e2c]/55">{t.summary}</p>
                                         <div className="mt-3 flex items-center justify-between text-xs text-[#0f2e2c]/60">
                                             <span>{t.duration}</span>
                                             <span className="font-semibold text-[#a86c1f]">{t.currency} {t.price.toLocaleString()} pp</span>
@@ -526,7 +527,13 @@ export default function BookTour() {
                                     {tour?.currency} {total.toLocaleString()}
                                 </span>
                             </div>
-                            <p className="mt-1 text-xs text-[#0f2e2c]/45">Payment confirmed after we contact you.</p>
+                            <div className="mt-5 flex items-start gap-3 rounded-lg border border-dashed border-[#B68A4E]/40 bg-[#B68A4E]/[0.06] px-4 py-3.5">
+                                <Banknote className="mt-0.5 h-4 w-4 shrink-0 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
+                                <p className="text-xs leading-relaxed text-[#23231F]/70">
+                                    <span className="font-medium text-[#0E3A3B]">Pay after the tour.</span>{" "}
+                                    No payment is taken now — Rohitha Boat Tours collects payment directly once your tour is complete.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </aside>

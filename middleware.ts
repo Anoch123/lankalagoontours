@@ -2,22 +2,22 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const token = request.cookies.get("sb-mkwcixirujhsujkgvugd-auth-token")?.value;
+  const token = request.cookies.get(process.env.SUPABASE_TOKEN_NAME as string)?.value;
 
   const { pathname } = request.nextUrl;
 
-  const isLogin = pathname === "/lankalagoon-admin";
-  const isAdmin = pathname.startsWith("/lankalagoon-admin/dashboard");
+  const isLogin = pathname === "/admin";
+  const isAdmin = pathname.startsWith("/admin/dashboard");
 
   if (isLogin && token) {
     return NextResponse.redirect(
-      new URL("/lankalagoon-admin/dashboard", request.url)
+      new URL("/admin/dashboard", request.url)
     );
   }
 
   if (isAdmin && !token) {
     return NextResponse.redirect(
-      new URL("/lankalagoon-admin", request.url)
+      new URL("/admin", request.url)
     );
   }
 
@@ -25,5 +25,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/lankalagoon-admin/:path*"],
+  matcher: ["/admin/:path*"],
 };

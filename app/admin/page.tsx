@@ -27,7 +27,7 @@ export default function LankaLagoonAdmin() {
       }
 
       if(result?.profile.role === 'ADMIN') {
-        router.push('/lankalagoon-admin/dashboard')
+        router.push('/admin/dashboard')
       }
 
     } catch (err: any) {

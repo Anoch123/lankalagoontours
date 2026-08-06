@@ -220,7 +220,7 @@ export default function Footer() {
               (item) => (
                 <a
                   key={item}
-                  href={"/lankalagoon-admin/ownership"}
+                  href={"/admin/ownership"}
                   className="font-body text-[13px] text-[#6b6b70] transition-colors hover:text-[#f5f4f1]"
                 >
                   {item}

@@ -77,7 +77,7 @@ export async function POST(request: Request) {
             })),
         };
 
-        const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL || ""}/lankalagoon-admin/bookings/${booking.id}`;
+        const adminUrl = `${process.env.NEXT_PUBLIC_SITE_URL || ""}/admin/bookings/${booking.id}`;
 
         const emailResults = await Promise.allSettled([
             sendBookingCustomerEmail(emailData),

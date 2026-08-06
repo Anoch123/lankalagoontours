@@ -389,7 +389,7 @@ export default function AdminBookings() {
                                                     <span className="text-xs text-red-600">{state.error}</span>
                                                 )}
                                                 <Link
-                                                    href={`/lankalagoon-admin/bookings/${booking.id}`}
+                                                    href={`/admin/bookings/${booking.id}`}
                                                     className="text-blue-600 hover:text-blue-800"
                                                 >
                                                     View
@@ -467,7 +467,7 @@ export default function AdminBookings() {
                                         <span className="text-xs text-red-600">{state.error}</span>
                                     )}
                                     <Link
-                                        href={`/lankalagoon-admin/bookings/${booking.id}`}
+                                        href={`/admin/bookings/${booking.id}`}
                                         className="text-sm text-blue-600 hover:text-blue-800"
                                     >
                                         View

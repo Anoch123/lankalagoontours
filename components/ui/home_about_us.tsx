@@ -155,7 +155,7 @@ export default function AboutUs() {
                 the whole canal goes quiet.
               </blockquote>
               <div className="quote-attr">
-                <span className="quote-name">Rohitha Fernando</span>
+                <span className="quote-name">Rohitha Prince</span>
                 <span className="quote-role">Founder &amp; head boatman</span>
               </div>
             </div>

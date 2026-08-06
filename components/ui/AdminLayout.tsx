@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     await handleLogoutService()
-    router.push('/lankalagoon-admin')
+    router.push('/admin')
   }
 
   if (loading) {

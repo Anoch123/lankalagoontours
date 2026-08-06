@@ -7,12 +7,16 @@ import { useBoatTours } from "@/hooks/admin/useBoatTours";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Package } from "@/lib/types/api/tour_packages";
-import { Clock, Users, Banknote, Activity, MapPin, Check } from "lucide-react";
+import { Clock, Users, Banknote, Activity, MapPin, Check, AlertCircle } from "lucide-react";
 
 export default function BoatTours() {
     const [tour, setTour] = useState<Package | null>(null);
     const { getBoatTour } = useBoatTours();
     const params = useParams();
+
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [guests, setGuests] = useState<number | null>(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const quickFacts = [
         { icon: Clock, label: "Duration", value: tour?.duration },
@@ -36,11 +40,37 @@ export default function BoatTours() {
 
             setTour(data);
 
+            if (data?.group_min) {
+                setGuests(data.group_min);
+            }
         }
 
         load();
 
     }, [params.id]);
+
+    const dateLabel = selectedDate
+        ? new Date(`${selectedDate}T00:00:00`).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+        })
+        : "Add dates";
+
+    function handleSubmit() {
+        if (!tour || !selectedDate || !guests) {
+            setConfirmOpen(true);
+
+            return;
+        }
+
+        const params = new URLSearchParams();
+        if (tour) params.set("destination", tour.id);
+        if (selectedDate) params.set("date", selectedDate.toISOString().slice(0, 10));
+        params.set("guests", String(guests));
+        window.location.href = `/book_tour?${params.toString()}`;
+    }
+
     return (
         <main className="bg-[#FAF7F1] text-[#23231F]">
             <PageHero
@@ -102,6 +132,26 @@ export default function BoatTours() {
                             {(Array.isArray(tour?.description) ? tour?.description : [tour?.description]).map((p, i) => (
                                 <p key={i}>{p}</p>
                             ))}
+                        </div>
+
+                        {/* Pick-up & drop-off */}
+                        <div className="mt-16">
+                            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[#0E3A3B]">
+                                Pick-up & drop-off
+                            </h2>
+                            <p className="mt-4 text-[15px] leading-relaxed text-[#23231F]/70">
+                                For groups of 1–3 guests, we can arrange return pick-up and drop-off by tuk-tuk
+                                from any local Negombo hotel for an additional LKR 1,500 per tuk-tuk. This is a
+                                lovely local experience and makes it easy to begin your lagoon adventure without
+                                arranging transport.
+                            </p>
+                            <div className="mt-5 flex items-start gap-3 rounded-lg border border-dashed border-[#B68A4E]/40 bg-[#B68A4E]/[0.06] px-4 py-3.5">
+                                <Banknote className="mt-0.5 h-4 w-4 shrink-0 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
+                                <p className="text-xs leading-relaxed text-[#23231F]/70">
+                                    <span className="font-medium text-[#0E3A3B]">LKR 1,500 per tuk-tuk</span>{" "}
+                                    · groups of 1–3 guests · pick-up from any Negombo hotel. Mention your hotel at the time of booking confirmation call to arrange this service.
+                                </p>
+                            </div>
                         </div>
 
                         {/* Itinerary */}
@@ -193,24 +243,11 @@ export default function BoatTours() {
                                     <input
                                         id="tour-date"
                                         type="date"
+                                        value={selectedDate ? selectedDate.toISOString().slice(0, 10) : ""}
+                                        onChange={(e) => setSelectedDate(e.target.value ? new Date(e.target.value) : null)}
+                                        min={new Date().toISOString().slice(0, 10)}
                                         className="mt-2 w-full rounded-lg border border-[#0E3A3B]/15 bg-[#FAF7F1] px-4 py-3 text-sm text-[#23231F] outline-none focus-visible:ring-2 focus-visible:ring-[#B68A4E]"
                                     />
-                                </div>
-
-                                <div>
-                                    <label
-                                        htmlFor="tour-time"
-                                        className="block text-xs uppercase tracking-[0.1em] text-[#23231F]/50"
-                                    >
-                                        Departure
-                                    </label>
-                                    <select
-                                        id="tour-time"
-                                        className="mt-2 w-full appearance-none rounded-lg border border-[#0E3A3B]/15 bg-[#FAF7F1] px-4 py-3 text-sm text-[#23231F] outline-none focus-visible:ring-2 focus-visible:ring-[#B68A4E]"
-                                    >
-                                        <option>06:30</option>
-                                        <option>15:30</option>
-                                    </select>
                                 </div>
 
                                 <div>
@@ -222,6 +259,8 @@ export default function BoatTours() {
                                     </label>
                                     <select
                                         id="tour-guests"
+                                        value={guests ?? ""}
+                                        onChange={(e) => setGuests(Number(e.target.value))}
                                         className="mt-2 w-full appearance-none rounded-lg border border-[#0E3A3B]/15 bg-[#FAF7F1] px-4 py-3 text-sm text-[#23231F] outline-none focus-visible:ring-2 focus-visible:ring-[#B68A4E]"
                                     >
                                         {Array.from({ length: (tour?.group_max ?? 0) - (tour?.group_min ?? 0) + 1 }, (_, i) => i + (tour?.group_min ?? 0)).map(
@@ -235,12 +274,30 @@ export default function BoatTours() {
                                 </div>
                             </div>
 
+                            {confirmOpen && (
+                                <div className="mt-5 flex items-start gap-3 rounded-lg border border-dashed border-red-400/50 bg-red-50 px-4 py-3.5">
+                                    <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" strokeWidth={1.5} aria-hidden />
+                                    <p className="text-xs leading-relaxed text-red-700/80">
+                                        Please pick a date and number of guests before reserving.
+                                    </p>
+                                </div>
+                            )}
+
                             <button
+                                onClick={handleSubmit}
                                 type="button"
                                 className="mt-7 w-full rounded-lg bg-[#0E3A3B] py-3.5 text-sm font-medium tracking-wide text-[#FAF7F1] transition hover:bg-[#0E3A3B]/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B68A4E]"
                             >
                                 Reserve a seat
                             </button>
+
+                            <div className="mt-5 flex items-start gap-3 rounded-lg border border-dashed border-[#B68A4E]/40 bg-[#B68A4E]/[0.06] px-4 py-3.5">
+                                <Banknote className="mt-0.5 h-4 w-4 shrink-0 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
+                                <p className="text-xs leading-relaxed text-[#23231F]/70">
+                                    <span className="font-medium text-[#0E3A3B]">Pay after the tour.</span>{" "}
+                                    No payment is taken now — Rohitha Boat Tours collects payment directly once your tour is complete.
+                                </p>
+                            </div>
 
                             <p className="mt-4 text-center text-xs text-[#23231F]/50">
                                 Free cancellation up to 24 hours before departure
@@ -249,7 +306,6 @@ export default function BoatTours() {
                     </div>
                 </div>
             </section>
-
             <Footer />
         </main>
     );

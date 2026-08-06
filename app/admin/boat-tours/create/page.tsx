@@ -78,7 +78,7 @@ export default function AdminBoatTours() {
             }
 
             setMessage(response.message);
-            router.push("/lankalagoon-admin/boat-tours");
+            router.push("/admin/boat-tours");
 
             setSaved(true);
 

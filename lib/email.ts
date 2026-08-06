@@ -39,7 +39,7 @@ let transporter: nodemailer.Transporter | null = null;
 function getTransporter(): nodemailer.Transporter {
   if (transporter) return transporter;
 
-   transporter = nodemailer.createTransport({
+  transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
@@ -110,6 +110,9 @@ function buildCustomerHtml(data: BookingEmailData) {
     .total-box .value { color: #ffffff; font-size: 20px; }
     .note { margin-top: 24px; font-size: 13px; color: #4b5563; line-height: 1.5; }
     .footer { margin-top: 24px; font-size: 12px; color: #9ca3af; text-align: center; }
+    .payment-box { margin-top: 24px; padding: 20px; border-radius: 12px; background: #fff7ed; border: 1px solid #fdba74; }
+    .payment-box .label { color: #c2410c; }
+    .payment-box .value { color: #7c2d12; }
   </style>
 </head>
 <body>
@@ -153,6 +156,11 @@ function buildCustomerHtml(data: BookingEmailData) {
         <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
       </div>
 
+      <div class="payment-box">
+        <div class="label">Payment</div>
+        <div class="value" style="margin-top:6px;font-size:15px;">No payment is required now. Rohitha Boat Tours collects payment directly once your tour is complete.</div>
+      </div>
+
       <div class="section-title">Passengers</div>
       <table class="table">
         <thead>
@@ -169,7 +177,7 @@ function buildCustomerHtml(data: BookingEmailData) {
 
       <div class="note">
         <strong>What happens next?</strong><br />
-        Our team will review your booking and confirm availability shortly. You will receive a confirmation call or email once your booking is confirmed. Payment will be collected after confirmation.
+        Our team will review your booking and confirm availability shortly. You will receive a confirmation call or email once your booking is confirmed.
       </div>
 
       <div class="note">
@@ -225,7 +233,6 @@ function buildBookingConfirmationHtml(data: BookingEmailData) {
     .payment-box { margin-top: 24px; padding: 20px; border-radius: 12px; background: #fff7ed; border: 1px solid #fdba74; }
     .payment-box .label { color: #c2410c; }
     .payment-box .value { color: #7c2d12; }
-    .payment-link { display: inline-block; margin-top: 12px; padding: 10px 18px; border-radius: 10px; background: #0f2e2c; color: #ffffff; text-decoration: none; font-size: 13px; font-weight: 600; }
     .qr-placeholder { margin-top: 12px; display: inline-flex; align-items: center; justify-content: center; width: 120px; height: 120px; background: #ffffff; border: 2px dashed #fdba74; border-radius: 12px; font-size: 11px; color: #9a3412; text-align: center; line-height: 1.4; }
   </style>
 </head>
@@ -283,10 +290,8 @@ function buildBookingConfirmationHtml(data: BookingEmailData) {
       </table>
 
       <div class="payment-box">
-        <div class="label">Payment Details</div>
-        <div class="value" style="margin-top:6px;font-size:15px;">Please complete your payment using the link below or scan the QR code.</div>
-        <div class="qr-placeholder">QR Code<br />Sample</div>
-        <a href="https://pay.sample-lankalagoontours.lk/booking/${escapeHtml(data.bookingNumber)}" class="payment-link">Pay Now — ${data.currency} ${data.totalPrice.toLocaleString()}</a>
+        <div class="label">Payment</div>
+        <div class="value" style="margin-top:6px;font-size:15px;">No payment is required now. Rohitha Boat Tours collects payment directly once your tour is complete.</div>
       </div>
 
       ${data.remarks ? `<div class="note"><strong>Remarks:</strong> ${escapeHtml(data.remarks)}</div>` : ""}
@@ -698,6 +703,8 @@ Date: ${data.bookingDate}
 Time: ${data.departureTime}
 Guests: ${data.guestCount}
 Total: ${data.currency} ${data.totalPrice}
+
+Payment: No payment is required now. Rohitha Boat Tours collects payment directly once your tour is complete.
 
 Passengers:
 ${data.passengers.map((p, i) => `${i + 1}. ${p.firstName} ${p.lastName} (${p.country})${p.isLead ? " - Lead" : ""}`).join("\n")}

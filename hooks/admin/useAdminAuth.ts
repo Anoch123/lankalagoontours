@@ -29,7 +29,7 @@ export function useAdminAuth() {
 
             if (!user) {
                 setLoading(false);
-                router.replace("/lankalagoon-admin");
+                router.replace("/admin");
                 return;
             }
 
@@ -42,7 +42,7 @@ export function useAdminAuth() {
 
             if (!profile || profile.role !== "ADMIN") {
                 setLoading(false);
-                router.replace("/lankalagoon-admin");
+                router.replace("/admin");
                 return;
             }
 

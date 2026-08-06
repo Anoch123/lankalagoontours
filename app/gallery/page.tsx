@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { Oswald } from "next/font/google";
 import { CATEGORIES, PHOTOS } from "@/lib/constants/gallery";
 import { Category, Photo } from "@/lib/types/gallery";
@@ -86,10 +87,12 @@ export default function Gallery() {
                         className={`group relative mb-4 block w-full overflow-hidden rounded-xl border border-[#0f2e2c]/10 break-inside-avoid ${photo.tall ? "aspect-[3/4]" : "aspect-[4/3]"
                             }`}
                     >
-                        <img
-                            src={`https://picsum.photos/seed/${photo.seed}/700/${photo.tall ? 933 : 525}`}
+                        <Image
+                            src={photo.src}
                             alt={photo.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0f2e2c]/85 via-[#0f2e2c]/0 to-[#0f2e2c]/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         <div className="absolute inset-x-0 bottom-0 translate-y-2 p-4 text-left opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
@@ -97,6 +100,7 @@ export default function Gallery() {
                                 {photo.category.toUpperCase()}
                             </span>
                             <p className="mt-1 text-sm font-medium text-[#f5efe3]">{photo.title}</p>
+                            <p className="mt-0.5 text-xs text-[#f5efe3]/70">{photo.tourName}</p>
                         </div>
                     </button>
                 ))}
@@ -131,20 +135,24 @@ export default function Gallery() {
                     </button>
 
                     <div
-                        className="max-h-[80vh] max-w-3xl overflow-hidden rounded-2xl"
+                        className="relative max-h-[80vh] w-full max-w-3xl overflow-hidden rounded-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <img
-                            src={`https://picsum.photos/seed/${filtered[lightbox].seed}/1200/${filtered[lightbox].tall ? 1600 : 900
-                                }`}
-                            alt={filtered[lightbox].title}
-                            className="max-h-[70vh] w-full object-cover"
-                        />
+                        <div className="relative aspect-[4/3] w-full sm:aspect-[16/10]">
+                            <Image
+                                src={filtered[lightbox].src}
+                                alt={filtered[lightbox].title}
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                            />
+                        </div>
                         <div className="bg-[#0f2e2c] p-5 text-center">
                             <span className={`${oswald.className} text-[10px] font-medium tracking-[0.2em] text-[#e7c16f]`}>
                                 {filtered[lightbox].category.toUpperCase()}
                             </span>
                             <p className="mt-1 text-sm font-medium text-[#f5efe3]">{filtered[lightbox].title}</p>
+                            <p className="mt-0.5 text-xs text-[#f5efe3]/60">{filtered[lightbox].tourName}</p>
                         </div>
                     </div>
 

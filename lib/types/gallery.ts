@@ -1,9 +1,10 @@
-export type Category = "Mangrove Tour" | "Sunset Tour" | "Fishing Tour" | "Bird Watching" | "Custom Tour";
+export type Category = "Sunset" | "Wildlife" | "Mangroves" | "Guests" | "Fishing" | "Village";
 
-export type Photo = {
-  id: string;
-  category: Category;
-  title: string;
-  seed: string;
-  tall?: boolean;
-};
+export interface Photo {
+    id: string;
+    src: string;
+    title: string;
+    tourName: string;
+    category: Category;
+    tall?: boolean;
+}
