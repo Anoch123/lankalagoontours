@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  const token = request.cookies.get(process.env.SUPABASE_TOKEN_NAME as string)?.value;
+export async function proxy(request: NextRequest) {
+  const tokenName = process.env.SUPABASE_TOKEN_NAME;
+
+  if (!tokenName) {
+    return NextResponse.next();
+  }
+
+  const token = request.cookies.get(tokenName)?.value;
 
   const { pathname } = request.nextUrl;
 
