@@ -21,11 +21,24 @@ export default function BoatTours() {
     const quickFacts = [
         { icon: Clock, label: "Duration", value: tour?.duration },
         { icon: Users, label: "Group size", value: `${tour?.group_min}–${tour?.group_max} guests` },
-        { icon: Banknote, label: "From", value: `${tour?.currency} ${tour?.price} / person` },
+        { icon: Banknote, label: "From", value: `${tour?.currency} ${tour?.guest_pricing && tour.guest_pricing.length > 0 ? Math.min(...tour.guest_pricing.map((p) => p.price)).toLocaleString() : tour?.price.toLocaleString()} Onwards` },
         { icon: Activity, label: "Fitness", value: "Low" },
     ];
 
     const stampTilts = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2"];
+
+    const getTourTotalPrice = (tourRecord: Package | null | undefined, guestCount: number): number => {
+        if (!tourRecord || guestCount <= 0) return 0;
+        const tiers = tourRecord.guest_pricing ?? [];
+        if (tiers.length > 0) {
+            const sorted = [...tiers].sort((a, b) => a.guest_count - b.guest_count);
+            const matched = sorted.find((tier) => tier.guest_count >= guestCount);
+            if (matched) return matched.price;
+        }
+        return tourRecord.price * guestCount;
+    };
+
+    const total = getTourTotalPrice(tour, guests ?? 0);
 
     useEffect(() => {
 
@@ -122,8 +135,17 @@ export default function BoatTours() {
                                             <p className="mt-1 font-[family-name:var(--font-display)] text-base text-[#1B2A4A]">
                                                 {value}
                                             </p>
-                                        </div>
+                                </div>
+
+                                {/* {guests && (
+                                    <div className="mt-4 flex items-center justify-between rounded-lg border border-[#0E3A3B]/10 bg-[#FAF7F1] px-4 py-3">
+                                        <span className="text-xs font-medium tracking-wide text-[#23231F]/70">Total</span>
+                                        <span className="font-[family-name:var(--font-display)] text-lg font-bold text-[#0E3A3B]">
+                                            {tour?.currency} {total.toLocaleString()}
+                                        </span>
                                     </div>
+                                )} */}
+                            </div>
                                 ))}
                             </div>
                         </div>
@@ -225,8 +247,8 @@ export default function BoatTours() {
                     <div className="lg:col-span-5">
                         <div className="sticky top-24 rounded-2xl border border-[#0E3A3B]/10 bg-white p-8 shadow-[0_20px_50px_-25px_rgba(14,58,59,0.3)]">
                             <p className="font-[family-name:var(--font-display)] text-3xl text-[#0E3A3B]">
-                                {tour?.currency} {tour?.price}
-                                <span className="text-base font-normal text-[#23231F]/50"> / person</span>
+                                {tour?.currency} {guests ? total.toLocaleString() : tour?.price.toLocaleString()}
+                                {!guests && <span className="text-base font-normal text-[#23231F]/50"> / person</span>}
                             </p>
                             <p className="mt-1 text-sm text-[#23231F]/60">
                                 {tour?.type} · {tour?.duration}
