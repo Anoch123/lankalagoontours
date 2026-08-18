@@ -8,7 +8,7 @@ import { useBoatTourForm, slugify } from '@/hooks/admin/useBoatTourForm'
 import { useRouter } from 'next/navigation';
 
 export default function AdminBoatTours() {
-    const { tour, saving, setSaving, saved, setSaved, errors, setErrors, update, updateListItem, addListItem, removeListItem, updateStop, addStop, removeStop, handleTitleChange, buildPayload } = useBoatTourForm('ACTIVE')
+    const { tour, saving, setSaving, saved, setSaved, errors, setErrors, update, updateListItem, addListItem, removeListItem, updateStop, addStop, removeStop, updateGuestPricing, addGuestPricing, removeGuestPricing, handleTitleChange, buildPayload } = useBoatTourForm('ACTIVE')
     const [message, setMessage] = useState<string | null>(null);
     const { saveTour } = useBoatTours();
     const router = useRouter();
@@ -242,6 +242,15 @@ export default function AdminBoatTours() {
                                 </p>
                             )
                         }
+                    </Field>
+
+                    <Field label="Guest pricing" full hint="Set total price per guest count tier. First entry with guest count &gt; 1 shows as '1–X guests'.">
+                        <GuestPricingEditor
+                            items={tour.guest_pricing}
+                            onChange={(i, key, value) => updateGuestPricing(i, key, value)}
+                            onAdd={addGuestPricing}
+                            onRemove={(i) => removeGuestPricing(i)}
+                        />
                     </Field>
 
                     <Field label="Duration">
@@ -537,6 +546,61 @@ function ListEditor({
                 className="text-sm text-[#146B72] hover:text-[#0B3D3E] font-medium"
             >
                 + Add
+            </button>
+        </div>
+    )
+}
+
+function GuestPricingEditor({
+    items,
+    onChange,
+    onAdd,
+    onRemove,
+}: {
+    items: { guest_count: string; price: string }[]
+    onChange: (index: number, key: 'guest_count' | 'price', value: string) => void
+    onAdd: () => void
+    onRemove: (index: number) => void
+}) {
+    return (
+        <div className="sm:col-span-2 space-y-2">
+            {items.map((item, i) => (
+                <div key={i} className="flex items-center gap-2">
+                    <input
+                        type="number"
+                        min="1"
+                        className={inputClass}
+                        value={item.guest_count}
+                        onChange={(e) => onChange(i, 'guest_count', e.target.value)}
+                        placeholder="Guests"
+                    />
+                    <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className={inputClass}
+                        value={item.price}
+                        onChange={(e) => onChange(i, 'price', e.target.value)}
+                        placeholder="Price"
+                    />
+                    {items.length > 1 && (
+                        <button
+                            type="button"
+                            onClick={() => onRemove(i)}
+                            className="text-[#E76F51] hover:text-[#C4573B] text-sm px-2"
+                            aria-label="Remove"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+            ))}
+            <button
+                type="button"
+                onClick={onAdd}
+                className="text-sm text-[#146B72] hover:text-[#0B3D3E] font-medium"
+            >
+                + Add pricing tier
             </button>
         </div>
     )

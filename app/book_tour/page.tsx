@@ -42,6 +42,17 @@ export default function BookTour() {
     const timeSlots = useMemo(() => { return formatTimeSlots(tour?.departures); }, [tour]);
     const departure_details = tour?.departure_details ?? null;
 
+    const getTourTotalPrice = (tourRecord: Package | null | undefined, guestCount: number): number => {
+        if (!tourRecord || guestCount <= 0) return 0;
+        const tiers = tourRecord.guest_pricing ?? [];
+        if (tiers.length > 0) {
+            const sorted = [...tiers].sort((a, b) => a.guest_count - b.guest_count);
+            const matched = sorted.find((tier) => tier.guest_count >= guestCount);
+            if (matched) return matched.price;
+        }
+        return tourRecord.price * guestCount;
+    };
+
     useEffect(() => {
         const loadBoatTours = async () => {
             const response = await listTour();
@@ -79,7 +90,7 @@ export default function BookTour() {
         setSelectedDate(null);
     };
 
-    const total = tour ? tour.price * guests : 0;
+    const total = getTourTotalPrice(tour, guests);
 
     const formatDateForDb = (value: Date) => {
         const year = value.getFullYear();
@@ -98,7 +109,7 @@ export default function BookTour() {
             booking_date: formatDateForDb(bookingDate),
             departure_time: selectedTime!,
             guest_count: guests,
-            total_price: Number((tour!.price * guests).toFixed(2)),
+            total_price: Number(getTourTotalPrice(tour!, guests).toFixed(2)),
             lead_name: `${leadPassenger.firstName} ${leadPassenger.lastName}`.trim(),
             email: contact.email,
             phone: contact.phone,
@@ -253,7 +264,11 @@ export default function BookTour() {
                                         <p className="mt-1 text-xs text-[#0f2e2c]/55">{t.summary}</p>
                                         <div className="mt-3 flex items-center justify-between text-xs text-[#0f2e2c]/60">
                                             <span>{t.duration}</span>
-                                            <span className="font-semibold text-[#a86c1f]">{t.currency} {t.price.toLocaleString()} pp</span>
+                                            <span className="font-semibold text-[#a86c1f]">
+                                                {t.guest_pricing && t.guest_pricing.length > 0
+                                                    ? `From ${t.currency} ${Math.min(...t.guest_pricing.map((p) => p.price)).toLocaleString()}`
+                                                    : `${t.currency} ${t.price.toLocaleString()} pp`}
+                                            </span>
                                         </div>
                                     </button>
                                 );
@@ -364,13 +379,20 @@ export default function BookTour() {
                         </div>
 
                         <div className="mb-5 flex items-center justify-between rounded-xl border border-[#0f2e2c]/10 px-4 py-3">
-                            <span className={`${oswald.className} text-xs font-medium tracking-wide text-[#0f2e2c]/70`}>
-                                Guests
-                            </span>
+                            <div>
+                                <span className={`${oswald.className} block text-xs font-medium tracking-wide text-[#0f2e2c]/70`}>
+                                    Guests
+                                </span>
+                                {tour && (
+                                    <span className="text-[11px] text-[#0f2e2c]/50">
+                                        Min {tour.group_min} guests — Max {tour.group_max} guests
+                                    </span>
+                                )}
+                            </div>
                             <div className="flex items-center gap-4">
                                 <button
                                     type="button"
-                                    onClick={() => updateGuestCount(Math.max(1, guests - 1))}
+                                    onClick={() => updateGuestCount(Math.max(tour?.group_min ?? 1, guests - 1))}
                                     className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0f2e2c]/15 text-[#0f2e2c] transition-colors hover:border-[#c9862f] hover:text-[#a86c1f]"
                                 >
                                     −
@@ -378,7 +400,7 @@ export default function BookTour() {
                                 <span className="w-4 text-center text-sm font-semibold text-[#0f2e2c]">{guests}</span>
                                 <button
                                     type="button"
-                                    onClick={() => updateGuestCount(Math.min(12, guests + 1))}
+                                    onClick={() => updateGuestCount(Math.min(tour?.group_max ?? 12, guests + 1))}
                                     className="flex h-8 w-8 items-center justify-center rounded-full border border-[#0f2e2c]/15 text-[#0f2e2c] transition-colors hover:border-[#c9862f] hover:text-[#a86c1f]"
                                 >
                                     +

@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 
+export const guestPricingSchema = z.object({
+    guest_count: z.number().int().positive("Guest count must be at least 1"),
+    price: z.number().positive("Price must be greater than 0"),
+});
+
 export const boatTourSchema = z.object({
 
     id: z
@@ -30,6 +35,10 @@ export const boatTourSchema = z.object({
     price: z
         .number()
         .positive("Price must be greater than 0"),
+
+    guest_pricing: z
+        .array(guestPricingSchema)
+        .optional(),
 
 });
 

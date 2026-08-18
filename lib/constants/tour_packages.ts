@@ -71,6 +71,7 @@ export const packages: Package[] = [
       "/images/tours/mangrove-2.jpg",
       "/images/tours/mangrove-3.jpg",
     ],
+    guest_pricing: [],
   },
   {
     id: "sunset-lagoon",
@@ -139,6 +140,7 @@ export const packages: Package[] = [
       "/images/tours/sunset-1.jpg",
       "/images/tours/sunset-2.jpg",
     ],
+    guest_pricing: [],
   },
 ];
 

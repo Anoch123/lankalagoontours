@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { BoatTourForm, ItineraryStop } from '@/lib/types/api/admin'
+import type { BoatTourForm, ItineraryStop, GuestPricing } from '@/lib/types/api/admin'
 import type { Package } from '@/lib/types/api/tour_packages'
 
 export function createEmptyBoatTour(status = 'ACTIVE'): BoatTourForm {
@@ -28,6 +28,7 @@ export function createEmptyBoatTour(status = 'ACTIVE'): BoatTourForm {
         itinerary: [{ title: '', time: '', copy: '' }],
         included: [''],
         gallery: [''],
+        guest_pricing: [{ guest_count: '', price: '' }],
         status,
     }
 }
@@ -66,6 +67,25 @@ export function normalizeBoatTour(data: Package | null | undefined, fallback?: B
         return Array.isArray(value) && value.every(isValidStop) ? value as ItineraryStop[] : [{ title: '', time: '', copy: '' }]
     }
 
+    const asGuestPricing = (key: string): GuestPricing[] => {
+        const value = record[key]
+        const isValidPricing = (item: unknown): item is GuestPricing => {
+            return typeof item === 'object' && item !== null && 'guest_count' in item && 'price' in item
+        }
+
+        const toFormPricing = (p: unknown): GuestPricing => {
+            const rec = p as Record<string, unknown>
+            return {
+                guest_count: typeof rec.guest_count === 'number' ? String(rec.guest_count) : '',
+                price: typeof rec.price === 'number' ? String(rec.price) : '',
+            }
+        }
+
+        return Array.isArray(value) && value.every(isValidPricing)
+            ? value.map(toFormPricing)
+            : [{ guest_count: '', price: '' }]
+    }
+
     return {
         id: asString('slug', typeof data.id === 'string' ? data.id : ''),
         title: asString('title'),
@@ -89,6 +109,7 @@ export function normalizeBoatTour(data: Package | null | undefined, fallback?: B
         itinerary: asItineraryStops('itinerary'),
         included: asStringArray('included'),
         gallery: asStringArray('gallery'),
+        guest_pricing: asGuestPricing('guest_pricing'),
         status: asString('status', 'ACTIVE'),
     }
 }
@@ -99,6 +120,12 @@ export function buildBoatTourPayload(tour: BoatTourForm) {
         price: Number(tour.price) || 0,
         group_min: Number(tour.group_min) || 0,
         group_max: Number(tour.group_max) || 0,
+        guest_pricing: tour.guest_pricing
+            .filter((p) => p.guest_count.trim() !== '' && p.price.trim() !== '')
+            .map((p) => ({
+                guest_count: Number(p.guest_count) || 0,
+                price: Number(p.price) || 0,
+            })),
         details: tour.details.filter((d) => d.trim() !== ''),
         included: tour.included.filter((d) => d.trim() !== ''),
         gallery: tour.gallery.filter((d) => d.trim() !== ''),
@@ -130,6 +157,20 @@ export function useBoatTourForm(initialStatus = 'ACTIVE') {
     const removeListItem = (field: 'details' | 'included' | 'gallery', index: number) => {
         const next = tour[field].filter((_, i) => i !== index)
         update(field, next.length ? next : [''])
+    }
+
+    const updateGuestPricing = (index: number, key: 'guest_count' | 'price', value: string) => {
+        const next = tour.guest_pricing.map((p, i) => (i === index ? { ...p, [key]: value } : p))
+        update('guest_pricing', next)
+    }
+
+    const addGuestPricing = () => {
+        update('guest_pricing', [...tour.guest_pricing, { guest_count: '', price: '' }])
+    }
+
+    const removeGuestPricing = (index: number) => {
+        const next = tour.guest_pricing.filter((_, i) => i !== index)
+        update('guest_pricing', next.length ? next : [{ guest_count: '', price: '' }])
     }
 
     const updateStop = (index: number, key: keyof ItineraryStop, value: string) => {
@@ -173,6 +214,9 @@ export function useBoatTourForm(initialStatus = 'ACTIVE') {
         updateStop,
         addStop,
         removeStop,
+        updateGuestPricing,
+        addGuestPricing,
+        removeGuestPricing,
         handleTitleChange,
         buildPayload,
     }

@@ -25,6 +25,7 @@ function buildSupabasePayload(tour: Package) {
         itinerary: tour.itinerary,
         included: tour.included,
         gallery: tour.gallery,
+        guest_pricing: tour.guest_pricing,
         status: tour.status,
     };
 

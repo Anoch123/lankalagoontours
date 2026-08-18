@@ -2,7 +2,11 @@ export interface ItineraryStop {
     title:string;
     time:string;
     copy:string;
-}   
+}
+export interface GuestPricing {
+    guest_count:number;
+    price:number;
+}
 export interface Package {
     id:string;
     title:string;
@@ -26,5 +30,6 @@ export interface Package {
     itinerary:ItineraryStop[];
     included:string[];
     gallery:string[];
+    guest_pricing:GuestPricing[];
     status:string;
 }
