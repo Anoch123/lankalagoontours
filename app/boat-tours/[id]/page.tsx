@@ -163,14 +163,14 @@ export default function BoatTours() {
                             </h2>
                             <p className="mt-4 text-[15px] leading-relaxed text-[#23231F]/70">
                                 For groups of 1–3 guests, we can arrange return pick-up and drop-off by tuk-tuk
-                                from any local Negombo hotel for an additional LKR 1,500 per tuk-tuk. This is a
+                                from any local Negombo hotel for an additional <strong>LKR 1,500 per tuk-tuk</strong>. This is a
                                 lovely local experience and makes it easy to begin your lagoon adventure without
                                 arranging transport.
                             </p>
                             <div className="mt-5 flex items-start gap-3 rounded-lg border border-dashed border-[#B68A4E]/40 bg-[#B68A4E]/[0.06] px-4 py-3.5">
                                 <Banknote className="mt-0.5 h-4 w-4 shrink-0 text-[#B68A4E]" strokeWidth={1.5} aria-hidden />
                                 <p className="text-xs leading-relaxed text-[#23231F]/70">
-                                    <span className="font-medium text-[#0E3A3B]">LKR 1,500 per tuk-tuk</span>{" "}
+                                    <span className="font-medium text-[#0E3A3B]"><strong>LKR 1,500 per tuk-tuk</strong></span>{" "}
                                     · groups of 1–3 guests · pick-up from any Negombo hotel. Mention your hotel at the time of booking confirmation call to arrange this service.
                                 </p>
                             </div>

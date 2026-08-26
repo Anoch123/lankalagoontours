@@ -84,7 +84,7 @@ export default function AdminBookings() {
             [booking.id]: { loading: true, success: false, error: '' },
         }))
         try {
-            await confirmBooking(booking.id)
+            await confirmBooking(booking.id, true)
             setConfirmState((prev) => ({
                 ...prev,
                 [booking.id]: { loading: true, success: true, error: '' },
@@ -92,7 +92,7 @@ export default function AdminBookings() {
             setBookings((prev) =>
                 prev.map((b) =>
                     b.id === booking.id
-                        ? { ...b, status: 'completed', payment_status: 'paid' }
+                        ? { ...b, payment_received_from_customer: true, commission_received_from_partner: true }
                         : b
                 )
             )
@@ -109,7 +109,7 @@ export default function AdminBookings() {
                 [booking.id]: {
                     loading: false,
                     success: false,
-                    error: err instanceof Error ? err.message : 'Failed to confirm booking',
+                    error: err instanceof Error ? err.message : 'Failed to send confirmation email',
                 },
             }))
             setTimeout(() => {
@@ -302,9 +302,9 @@ export default function AdminBookings() {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Customer
-                                </th>
+                                </th> */}
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Tour
                                 </th>
@@ -312,7 +312,13 @@ export default function AdminBookings() {
                                     Tour Date
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Group Size
+                                    Tuk Tuk
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Paid to Partner
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Commission
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Amount
@@ -322,6 +328,9 @@ export default function AdminBookings() {
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Email Sent
                                 </th>
                                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -335,10 +344,10 @@ export default function AdminBookings() {
 
                                 return (
                                     <tr key={booking.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                        {/* <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <div className="font-medium text-gray-900">{booking.lead_name}</div>
                                             <div className="text-gray-500">{booking.email}</div>
-                                        </td>
+                                        </td> */}
 
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {booking.boat_tours?.title ?? '-'}
@@ -349,11 +358,19 @@ export default function AdminBookings() {
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {booking.guest_count}
+                                            {booking.needs_tuk_tuk ? 'Yes' : 'No'}
+                                        </td>
+
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {booking.payment_received_from_customer ? '✅ Yes' : '❌ No'}
+                                        </td>
+
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {booking.commission_received_from_partner ? '✅ Yes' : '❌ No'}
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            Rs. {Number(booking.total_price).toLocaleString()}
+                                            Rs. {Number(booking.needs_tuk_tuk ? booking.total_price + 1500 : booking.total_price).toLocaleString()}
                                         </td>
 
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -370,20 +387,27 @@ export default function AdminBookings() {
                                             />
                                         </td>
 
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {booking.email_sent ? '✅ Yes' : '❌ No'}
+                                        </td>
+
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center justify-end gap-3">
-                                                {canConfirm && (
+                                                {canConfirm && !booking.email_sent && (
                                                     <button
                                                         onClick={() => openConfirm(booking)}
                                                         disabled={state?.loading}
                                                         className="text-emerald-600 hover:text-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
                                                         {state?.success
-                                                            ? 'Confirmed'
+                                                            ? 'Sent'
                                                             : state?.loading
-                                                                ? 'Confirming...'
-                                                                : 'Confirm'}
+                                                                ? 'Sending...'
+                                                                : 'Send Confirmation'}
                                                     </button>
+                                                )}
+                                                {canConfirm && booking.email_sent && (
+                                                    <span className="text-xs text-gray-500">Email sent</span>
                                                 )}
                                                 {state?.error && (
                                                     <span className="text-xs text-red-600">{state.error}</span>
@@ -436,6 +460,12 @@ export default function AdminBookings() {
                                     <span className="whitespace-nowrap">{new Date(booking.booking_date).toLocaleDateString()}</span>
                                     <span className="text-gray-300">|</span>
                                     <span className="whitespace-nowrap">{booking.guest_count} guests</span>
+                                    <span className="text-gray-300">|</span>
+                                    <span className="whitespace-nowrap">{booking.needs_tuk_tuk ? 'Tuk Tuk: Yes' : 'Tuk Tuk: No'}</span>
+                                    <span className="text-gray-300">|</span>
+                                    <span className="whitespace-nowrap">{booking.payment_received_from_customer ? 'Paid: Yes' : 'Paid: No'}</span>
+                                    <span className="text-gray-300">|</span>
+                                    <span className="whitespace-nowrap">{booking.commission_received_from_partner ? 'Commission: Yes' : 'Commission: No'}</span>
                                 </div>
 
                                 <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -450,18 +480,21 @@ export default function AdminBookings() {
                                 </div>
 
                                 <div className="mt-3 flex flex-wrap items-center gap-3">
-                                    {canConfirm && (
+                                    {canConfirm && !booking.email_sent && (
                                         <button
                                             onClick={() => openConfirm(booking)}
                                             disabled={state?.loading}
                                             className="text-sm text-emerald-600 hover:text-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {state?.success
-                                                ? 'Confirmed'
+                                                ? 'Sent'
                                                 : state?.loading
-                                                    ? 'Confirming...'
-                                                    : 'Confirm'}
+                                                    ? 'Sending...'
+                                                    : 'Send Confirmation'}
                                         </button>
+                                    )}
+                                    {canConfirm && booking.email_sent && (
+                                        <span className="text-xs text-gray-500">Email sent</span>
                                     )}
                                     {state?.error && (
                                         <span className="text-xs text-red-600">{state.error}</span>
@@ -489,12 +522,12 @@ export default function AdminBookings() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmBookingId(null)} />
                     <div className="relative bg-white rounded-xl shadow-xl border border-gray-200 max-w-md w-full p-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Confirm Booking</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Send Confirmation Email</h3>
                         <p className="mt-2 text-sm text-gray-600">
-                            Are you sure you want to confirm booking <span className="font-semibold text-gray-900">#{selectedBooking.booking_number}</span> for <span className="font-semibold text-gray-900">{selectedBooking.lead_name}</span>?
+                            Send confirmation email to <span className="font-semibold text-gray-900">{selectedBooking.email}</span> for booking <span className="font-semibold text-gray-900">#{selectedBooking.booking_number}</span>?
                         </p>
                         <p className="mt-2 text-sm text-gray-500">
-                            The booking status will be updated to <span className="font-semibold text-gray-900">completed</span> and a confirmation email with payment details will be sent to <span className="font-semibold text-gray-900">{selectedBooking.email}</span>.
+                            The customer will receive booking details and payment information.
                         </p>
                         <div className="mt-6 flex justify-end gap-3">
                             <button
@@ -507,7 +540,7 @@ export default function AdminBookings() {
                                 onClick={() => handleConfirm(selectedBooking)}
                                 className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700"
                             >
-                                Yes, Confirm
+                                Yes, Send Email
                             </button>
                         </div>
                     </div>

@@ -11,6 +11,7 @@ export const bookingSchema = z.object({
     email: z.string().trim().email("Enter a valid email"),
     phone: z.string().min(1, "Phone number is required"),
     remarks: z.string().optional(),
+    needs_tuk_tuk: z.boolean().default(false),
     status: z.string().default("pending"),
     payment_status: z.string().default("pending"),
 });

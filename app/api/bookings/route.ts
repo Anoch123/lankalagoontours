@@ -24,6 +24,7 @@ export async function POST(request: Request) {
                 email: bookingPayload.email,
                 phone: bookingPayload.phone,
                 remarks: bookingPayload.remarks,
+                needs_tuk_tuk: bookingPayload.needs_tuk_tuk,
                 status: bookingPayload.status,
                 payment_status: bookingPayload.payment_status,
             })
@@ -62,12 +63,14 @@ export async function POST(request: Request) {
             bookingDate: bookingPayload.booking_date,
             departureTime: bookingPayload.departure_time,
             guestCount: bookingPayload.guest_count,
-            totalPrice: bookingPayload.total_price,
+            totalPrice: bookingPayload.needs_tuk_tuk ? bookingPayload.total_price + 1500 : bookingPayload.total_price,
+            baseTotalPrice: bookingPayload.needs_tuk_tuk ? bookingPayload.total_price : bookingPayload.total_price,
             currency,
             leadName: bookingPayload.lead_name,
             email: bookingPayload.email,
             phone: bookingPayload.phone,
             remarks: bookingPayload.remarks ?? "",
+            needsTukTuk: bookingPayload.needs_tuk_tuk,
             status: bookingPayload.status,
             passengers: passengersPayload.map((p: { first_name: string; last_name: string; country: string; is_lead: boolean }) => ({
                 firstName: p.first_name,

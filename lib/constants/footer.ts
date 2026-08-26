@@ -2,7 +2,7 @@ import { LinkGroup } from "../types/footer";
 
 export const OFFICE_DETAILS = {
   address: "Vibrant House 16 Canal Road, Palagathura, Kochchikade, Negombo, Sri Lanka 11500.",
-  email: "info@lankalagoontours.lk",
+  email: "lankalagoontours@gmail.com",
   phone: "+94 76 344 3826",
 };
 

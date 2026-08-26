@@ -16,8 +16,8 @@ function getEnv(): Env {
   const smtpSecure = process.env.SMTP_SECURE === "true";
   const smtpUser = process.env.SMTP_USER;
   const smtpPass = process.env.SMTP_PASS;
-  const emailFrom = process.env.EMAIL_FROM || "Lanka Lagoon Tours <info@lankalagoontours.lk>";
-  const adminEmail = process.env.ADMIN_EMAIL || "info@lankalagoontours.lk";
+  const emailFrom = process.env.EMAIL_FROM || "Lanka Lagoon Tours <lankalagoontours@gmail.com>";
+  const adminEmail = process.env.ADMIN_EMAIL || "lankalagoontours@gmail.com";
 
   if (!smtpHost || !smtpPort || !smtpUser || !smtpPass) {
     throw new Error("Missing SMTP configuration environment variables");
@@ -57,11 +57,13 @@ export interface BookingEmailData {
   departureTime: string;
   guestCount: number;
   totalPrice: number;
+  baseTotalPrice: number;
   currency: string;
   leadName: string;
   email: string;
   phone: string;
   remarks: string;
+  needsTukTuk: boolean;
   status: string;
   passengers: {
     firstName: string;
@@ -151,10 +153,27 @@ function buildCustomerHtml(data: BookingEmailData) {
         </div>
       </div>
 
+      ${data.needsTukTuk ? `
+      <div class="total-box">
+        <div class="label">Tour Total</div>
+        <div class="value">${data.currency} ${data.baseTotalPrice.toLocaleString()}</div>
+      </div>
+      <div style="margin-top:12px;padding:14px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:#166534;font-weight:600;">Tuk Tuk Ride</span>
+          <span style="font-size:13px;color:#166534;font-weight:600;">LKR 1,500</span>
+        </div>
+      </div>
+      <div class="total-box" style="margin-top:12px;">
+        <div class="label">Final Total</div>
+        <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
+      </div>
+      ` : `
       <div class="total-box">
         <div class="label">Total Amount</div>
         <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
       </div>
+      `}
 
       <div class="payment-box">
         <div class="label">Payment</div>
@@ -181,7 +200,9 @@ function buildCustomerHtml(data: BookingEmailData) {
       </div>
 
       <div class="note">
-        Questions? Contact us at <a href="mailto:info@lankalagoontours.lk" style="color:#c9862f;text-decoration:underline;">info@lankalagoontours.lk</a> or call +94 76 344 3826.
+        Questions? Contact us at <a href="mailto:lankalagoontours@gmail.com
+" style="color:#c9862f;text-decoration:underline;">lankalagoontours@gmail.com
+</a> or call +94 76 344 3826.
       </div>
 
       <div class="footer">Lanka Lagoon Tours · Vibrant House 16 Canal Road, Palagathura, Kochchikade, Negombo, Sri Lanka 11500.</div>
@@ -272,10 +293,27 @@ function buildBookingConfirmationHtml(data: BookingEmailData) {
         </div>
       </div>
 
+      ${data.needsTukTuk ? `
+      <div class="total-box">
+        <div class="label">Tour Total</div>
+        <div class="value">${data.currency} ${data.baseTotalPrice.toLocaleString()}</div>
+      </div>
+      <div style="margin-top:12px;padding:14px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:#166534;font-weight:600;">Tuk Tuk Ride</span>
+          <span style="font-size:13px;color:#166534;font-weight:600;">LKR 1,500</span>
+        </div>
+      </div>
+      <div class="total-box" style="margin-top:12px;">
+        <div class="label">Final Total</div>
+        <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
+      </div>
+      ` : `
       <div class="total-box">
         <div class="label">Total Amount</div>
         <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
       </div>
+      `}
 
       <div class="section-title">Passengers</div>
       <table class="table">
@@ -302,7 +340,9 @@ function buildBookingConfirmationHtml(data: BookingEmailData) {
       </div>
 
       <div class="note">
-        Questions? Contact us at <a href="mailto:info@lankalagoontours.lk" style="color:#c9862f;text-decoration:underline;">info@lankalagoontours.lk</a> or call +94 76 344 3826.
+        Questions? Contact us at <a href="mailto:lankalagoontours@gmail.com
+" style="color:#c9862f;text-decoration:underline;">lankalagoontours@gmail.com
+</a> or call +94 76 344 3826.
       </div>
 
       <div class="footer">Lanka Lagoon Tours · Vibrant House 16 Canal Road, Palagathura, Kochchikade, Negombo, Sri Lanka 11500.</div>
@@ -322,8 +362,7 @@ Tour: ${data.tourTitle}
 Date: ${data.bookingDate}
 Time: ${data.departureTime}
 Guests: ${data.guestCount}
-Total: ${data.currency} ${data.totalPrice.toLocaleString()}
-
+${data.needsTukTuk ? `Tour Total: ${data.currency} ${data.baseTotalPrice.toLocaleString()}\nTuk Tuk Ride: LKR 1,500\nFinal Total: ${data.currency} ${data.totalPrice.toLocaleString()}\n` : `Total: ${data.currency} ${data.totalPrice.toLocaleString()}\n`}
 Passengers:
 ${data.passengers.map((p, i) => `${i + 1}. ${p.firstName} ${p.lastName} (${p.country})${p.isLead ? " - Lead" : ""}`).join("\n")}
 
@@ -433,10 +472,27 @@ function buildAdminHtml(data: BookingEmailData, adminUrl?: string) {
         </div>
       </div>
 
+      ${data.needsTukTuk ? `
+      <div class="total-box">
+        <div class="label">Tour Total</div>
+        <div class="value">${data.currency} ${data.baseTotalPrice.toLocaleString()}</div>
+      </div>
+      <div style="margin-top:12px;padding:14px;border-radius:12px;background:#f0fdf4;border:1px solid #bbf7d0;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;color:#166534;font-weight:600;">Tuk Tuk Ride</span>
+          <span style="font-size:13px;color:#166534;font-weight:600;">LKR 1,500</span>
+        </div>
+      </div>
+      <div class="total-box" style="margin-top:12px;">
+        <div class="label">Final Total</div>
+        <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
+      </div>
+      ` : `
       <div class="total-box">
         <div class="label">Total Amount</div>
         <div class="value">${data.currency} ${data.totalPrice.toLocaleString()}</div>
       </div>
+      `}
 
       <div class="section-title">Passengers</div>
       <table class="table">
@@ -607,7 +663,8 @@ Email: ${data.email}
 Phone: ${data.phone || "—"}
 Country: ${data.country}
 
-Questions? Contact us at info@lankalagoontours.lk or call +94 76 344 3826.`;
+Questions? Contact us at lankalagoontours@gmail.com
+ or call +94 76 344 3826.`;
 }
 
 function buildContactAdminText(data: ContactEmailData): string {
@@ -702,8 +759,7 @@ Tour: ${data.tourTitle}
 Date: ${data.bookingDate}
 Time: ${data.departureTime}
 Guests: ${data.guestCount}
-Total: ${data.currency} ${data.totalPrice}
-
+${data.needsTukTuk ? `Tour Total: ${data.currency} ${data.baseTotalPrice}\nTuk Tuk Ride: LKR 1,500\nFinal Total: ${data.currency} ${data.totalPrice}\n` : `Total: ${data.currency} ${data.totalPrice}\n`}
 Payment: No payment is required now. Rohitha Boat Tours collects payment directly once your tour is complete.
 
 Passengers:
@@ -727,8 +783,7 @@ Tour: ${data.tourTitle}
 Date: ${data.bookingDate}
 Time: ${data.departureTime}
 Guests: ${data.guestCount}
-Total: ${data.currency} ${data.totalPrice}
-
+${data.needsTukTuk ? `Tour Total: ${data.currency} ${data.baseTotalPrice}\nTuk Tuk Ride: LKR 1,500\nFinal Total: ${data.currency} ${data.totalPrice}\n` : `Total: ${data.currency} ${data.totalPrice}\n`}
 Passengers:
 ${data.passengers.map((p, i) => `${i + 1}. ${p.firstName} ${p.lastName} (${p.country})${p.isLead ? " - Lead" : ""}`).join("\n")}
 

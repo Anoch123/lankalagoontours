@@ -101,9 +101,9 @@ export default function TourPackages() {
                 <h3 className="lg-display text-[#0E4A45] text-xl font-medium mt-1.5 mb-2 leading-snug">
                   {pkg.title}
                 </h3>
-                <p className="lg-body text-[#12231F]/70 text-sm leading-relaxed mb-5">
+                {/* <p className="lg-body text-[#12231F]/70 text-sm leading-relaxed mb-5">
                   {pkg.description}
-                </p>
+                </p> */}
 
                 <div className="flex items-center justify-between border-t border-[#0E4A45]/10 pt-4">
                   <div className="lg-body">
@@ -111,7 +111,7 @@ export default function TourPackages() {
                       {pkg.duration} Trip
                     </p>
                     <p className="text-[#0E4A45] font-semibold text-sm">
-                      From {pkg.currency}{pkg.price}
+                      From {`${pkg?.currency} ${pkg?.guest_pricing && pkg.guest_pricing.length > 0 ? Math.min(...pkg.guest_pricing.map((p) => p.price)).toLocaleString() : pkg?.price.toLocaleString()} Onwards`}
                     </p>
                   </div>
                   <a

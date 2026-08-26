@@ -38,6 +38,10 @@ export interface Booking {
     email: string;
     phone: string;
     remarks: string;
+    needs_tuk_tuk: boolean;
+    payment_received_from_customer: boolean;
+    commission_received_from_partner: boolean;
+    email_sent: boolean;
 
     payment_status: "pending" | "paid" | "failed" | "refunded";
     status: "pending" | "confirmed" | "cancelled" | "completed";

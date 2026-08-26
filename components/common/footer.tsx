@@ -91,7 +91,7 @@ export default function Footer() {
               className="mt-5 max-w-xs text-[14px] leading-relaxed text-[#f6efde]/60"
               style={{ fontFamily: "var(--font-work-sans)" }}
             >
-              Connecting travellers with authentic lagoon & mangrove experiences through trusted local boat operators in Negombo.
+              Connecting travelers with authentic lagoon & mangrove experiences through trusted local boat operators in Negombo.
             </p>
 
             <div className="mt-7 flex items-center gap-3">

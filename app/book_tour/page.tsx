@@ -29,6 +29,7 @@ export default function BookTour() {
     const [guests, setGuests] = useState(2);
     const [contact, setContact] = useState({ email: "", phone: "", remarks: "" });
     const [passengers, setPassengers] = useState<Passenger[]>([emptyPassenger(), emptyPassenger()]);
+    const [needsTukTuk, setNeedsTukTuk] = useState(false);
     const [confirmed, setConfirmed] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
@@ -90,7 +91,7 @@ export default function BookTour() {
         setSelectedDate(null);
     };
 
-    const total = getTourTotalPrice(tour, guests);
+    const total = getTourTotalPrice(tour, guests) + (needsTukTuk ? 1500 : 0);
 
     const formatDateForDb = (value: Date) => {
         const year = value.getFullYear();
@@ -116,6 +117,7 @@ export default function BookTour() {
             remarks: contact.remarks || "",
             status: "pending",
             payment_status: "pending",
+            needs_tuk_tuk: needsTukTuk,
         };
     };
 
@@ -211,6 +213,9 @@ export default function BookTour() {
                             {monthLabel} {selectedDate} &middot; {selectedTime} &middot; {guests} guest{guests > 1 ? "s" : ""}
                         </p>
                         <p className="mt-4 text-lg font-semibold text-[#0f2e2c]">Total Amount of Tour : {tour.currency}{total.toLocaleString()}</p>
+                        {needsTukTuk && (
+                            <p className="mt-1 text-sm text-[#0f2e2c]/60">Includes tuk tuk ride LKR 1,500</p>
+                        )}
                         <p className="mt-6 text-sm text-[#0f2e2c]/60">
                             A confirmation will be sent to {contact.email || "your email"}.
                         </p>
@@ -494,6 +499,18 @@ export default function BookTour() {
                             />
                         </label>
 
+                        <label className="mt-4 flex items-center gap-3">
+                            <input
+                                type="checkbox"
+                                checked={needsTukTuk}
+                                onChange={(e) => setNeedsTukTuk(e.target.checked)}
+                                className="h-4 w-4 rounded border-[#0f2e2c]/15 text-[#c9862f] focus:ring-[#c9862f]"
+                            />
+                            <span className="text-sm text-[#0f2e2c]">
+                                Add tuk tuk ride from hotel to tour location <span className="font-medium text-[#a86c1f]">(+LKR 1,500)</span>
+                            </span>
+                        </label>
+
                         {submitError ? (
                             <p className="mt-4 text-sm text-red-600">{submitError}</p>
                         ) : null}
@@ -539,6 +556,12 @@ export default function BookTour() {
                             <div className="flex items-center justify-between">
                                 <span className="text-[#0f2e2c]/50">Guests</span>
                                 <span className="font-medium text-[#0f2e2c]">{guests}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-[#0f2e2c]/50">Tuk Tuk</span>
+                                <span className="font-medium text-[#0f2e2c]">
+                                    {needsTukTuk ? `Yes (LKR ${(1500).toLocaleString()})` : "No"}
+                                </span>
                             </div>
                         </div>
 
