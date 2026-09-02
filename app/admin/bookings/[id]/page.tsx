@@ -37,7 +37,7 @@ export default function BookingDetails() {
 
         load();
     }, [id]);
-
+// hi test
     const canComplete = booking?.status !== 'completed' && booking?.status !== 'cancelled';
     const bothChecked = paymentReceived && commissionReceived;
     const emailSent = booking?.email_sent ?? false;
