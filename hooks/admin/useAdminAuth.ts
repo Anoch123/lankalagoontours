@@ -40,7 +40,7 @@ export function useAdminAuth() {
                     .eq("admin_users_id", user.id)
                     .single<AdminUserProfile>();
 
-            if (!profile || profile.role !== "ADMIN") {
+            if (!profile || profile.role?.toUpperCase() !== "ADMIN") {
                 setLoading(false);
                 router.replace("/admin");
                 return;

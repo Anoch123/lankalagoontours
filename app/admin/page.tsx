@@ -26,7 +26,7 @@ export default function LankaLagoonAdmin() {
         return;
       }
 
-      if(result?.profile.role === 'ADMIN') {
+      if(result?.profile.role?.toUpperCase() === 'ADMIN') {
         router.push('/admin/dashboard')
       }
 
